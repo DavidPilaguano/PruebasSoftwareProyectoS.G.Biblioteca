@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Libro } from '@/types/biblioteca';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 export default function LibraryPage() {
   const [libros, setLibros] = useState<Libro[]>([]);
@@ -31,6 +31,48 @@ export default function LibraryPage() {
     };
     getLibros();
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!idUsuario || !idUsuarioSistema || !selectedLibro) {
+      setStatus('Por favor completa todos los campos');
+      return;
+    }
+
+    setLoading(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch(`${apiUrl}/prestamos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_usuario: parseInt(idUsuario),
+          id_usuario_sistema: parseInt(idUsuarioSistema),
+          id_libro: selectedLibro,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setStatus(`Error: ${error.message || 'No se pudo crear el préstamo'}`);
+        setLoading(false);
+        return;
+      }
+
+      setStatus('Préstamo creado exitosamente');
+      setIdUsuario('');
+      setIdUsuarioSistema('');
+      setSelectedLibro(null);
+    } catch (error) {
+      setStatus(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900 p-8">
