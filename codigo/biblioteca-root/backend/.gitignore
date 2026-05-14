@@ -1,0 +1,78 @@
+# =========================================================
+# DEPENDENCIAS (Eliminadas las barras '/' iniciales para recursividad)
+# =========================================================
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# =========================================================
+# COMPILACIÓN Y SALIDAS DE PRODUCCIÓN
+# =========================================================
+dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+next-env.d.ts
+
+# =========================================================
+# PRUEBAS, COBERTURA Y REPORTE DE CALIDAD (SONARQUBE)
+# =========================================================
+coverage/
+.nyc_output
+.scannerwork/
+.sonar/
+test-report.xml
+*.lcov
+
+# =========================================================
+# VARIABLES DE ENTORNO Y CONFIGURACIONES SECRETAS (¡CRÍTICO!)
+# =========================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# =========================================================
+# LOGS, TEMPORALES Y RENDIMIENTO
+# =========================================================
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.temp
+.tmp
+pids
+*.pid
+*.seed
+*.pid.lock
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# =========================================================
+# EDITORES DE CÓDIGO Y SISTEMA OPERATIVO
+# =========================================================
+.DS_Store
+Thumbs.db
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.vercel

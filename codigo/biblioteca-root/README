@@ -1,0 +1,5 @@
+npx @nestjs/cli new backend --package-manager npm
+
+npm install @supabase/supabase-js @nestjs/config
+
+npx supabase gen types typescript --project-id jjfahypzwnskfiaydohk > frontend/src/types/supabase.ts
