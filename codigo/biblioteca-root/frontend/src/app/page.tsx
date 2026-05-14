@@ -1,174 +1,117 @@
 'use client';
+
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Libro } from '@/types/biblioteca';
+import { prestamosApi } from '@/lib/api';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
-
-export default function LibraryPage() {
-  const [libros, setLibros] = useState<Libro[]>([]);
-  const [selectedLibro, setSelectedLibro] = useState<number | null>(null);
-  const [idUsuario, setIdUsuario] = useState('');
-  const [idUsuarioSistema, setIdUsuarioSistema] = useState('');
-  const [status, setStatus] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+export default function Dashboard() {
+  const [prestamosCount, setPrestamosCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getLibros = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('libro')
-        .select('id_libro, titulo, isbn, categoria(nombre), editorial(nombre)')
-        .order('titulo', { ascending: true });
-
-      setLoading(false);
-      if (error) {
-        setStatus(`Error cargando libros: ${error.message}`);
-        return;
+    const fetchData = async () => {
+      try {
+        const prestamos = await prestamosApi.getAll();
+        setPrestamosCount(prestamos.length);
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+      } finally {
+        setLoading(false);
       }
-
-      setLibros(data as Libro[]);
     };
-    getLibros();
+
+    fetchData();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!idUsuario || !idUsuarioSistema || !selectedLibro) {
-      setStatus('Por favor completa todos los campos');
-      return;
-    }
-
-    setLoading(true);
-    setStatus(null);
-
-    try {
-      const response = await fetch(`${apiUrl}/prestamos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id_usuario: parseInt(idUsuario),
-          id_usuario_sistema: parseInt(idUsuarioSistema),
-          id_libro: selectedLibro,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        setStatus(`Error: ${error.message || 'No se pudo crear el préstamo'}`);
-        setLoading(false);
-        return;
-      }
-
-      setStatus('Préstamo creado exitosamente');
-      setIdUsuario('');
-      setIdUsuarioSistema('');
-      setSelectedLibro(null);
-    } catch (error) {
-      setStatus(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 p-8">
-      <div className="mx-auto max-w-5xl space-y-8">
-        <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h1 className="text-3xl font-semibold text-slate-900">Biblioteca</h1>
-          <p className="mt-2 text-slate-600">
-            Lista de libros disponibles y formulario para crear préstamos.
-          </p>
-        </section>
-
-        <section className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="space-y-6">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-semibold">Libros disponibles</h2>
-              {loading && libros.length === 0 ? (
-                <p className="mt-4 text-slate-500">Cargando libros...</p>
-              ) : (
-                <div className="mt-4 grid gap-4">
-                  {libros.map((libro) => (
-                    <article key={libro.id_libro} className="rounded-3xl border border-slate-200 p-4 transition hover:border-slate-400">
-                      <h3 className="text-lg font-medium text-slate-900">{libro.titulo}</h3>
-                      <p className="mt-1 text-sm text-slate-600">ISBN: {libro.isbn}</p>
-                      <p className="mt-2 text-sm text-slate-700">
-                        Categoría: {libro.categoria?.nombre ?? 'Sin categoría'}
-                      </p>
-                      <p className="text-sm text-slate-700">
-                        Editorial: {libro.editorial?.nombre ?? 'Desconocida'}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedLibro(libro.id_libro)}
-                        className={`mt-4 inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold ${
-                          selectedLibro === libro.id_libro
-                            ? 'bg-slate-900 text-white'
-                            : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                        }`}
-                      >
-                        {selectedLibro === libro.id_libro ? 'Seleccionado' : 'Seleccionar'}
-                      </button>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {status ? (
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-900">
-                {status}
-              </div>
-            ) : null}
-          </div>
-
-          <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold">Crear préstamo</h2>
-            <div className="mt-6 space-y-4">
-              <label className="block">
-                <span className="text-sm font-medium text-slate-700">ID del usuario</span>
-                <input
-                  type="number"
-                  value={idUsuario}
-                  onChange={(event) => setIdUsuario(event.target.value)}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-slate-400"
-                  placeholder="Ej. 1"
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-sm font-medium text-slate-700">ID del usuario del sistema</span>
-                <input
-                  type="number"
-                  value={idUsuarioSistema}
-                  onChange={(event) => setIdUsuarioSistema(event.target.value)}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-slate-400"
-                  placeholder="Ej. 101"
-                />
-              </label>
-
-              <div className="space-y-2">
-                <span className="block text-sm font-medium text-slate-700">Libro seleccionado</span>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                  {selectedLibro ? `Libro #${selectedLibro}` : 'Selecciona un libro de la lista.'}
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {loading ? 'Enviando...' : 'Crear préstamo'}
-              </button>
-            </div>
-          </form>
-        </section>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-slate-900">Dashboard</h1>
+        <p className="text-slate-600 mt-2">Sistema de Gestión de Biblioteca</p>
       </div>
-    </main>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-slate-600 text-sm font-medium">Préstamos Activos</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">
+            {loading ? '-' : prestamosCount}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-slate-600 text-sm font-medium">Libros en Sistema</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">-</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-slate-600 text-sm font-medium">Usuarios Registrados</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">-</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-slate-600 text-sm font-medium">Ejemplares Disponibles</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">-</div>
+        </div>
+      </div>
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">Acciones Rápidas</h2>
+          <div className="space-y-2">
+            <Link
+              href="/prestamos/crear"
+              className="block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-center"
+            >
+              Crear Préstamo
+            </Link>
+            <Link
+              href="/libros/crear"
+              className="block px-4 py-2 bg-blue-100 text-blue-900 rounded hover:bg-blue-200 transition text-center"
+            >
+              Agregar Libro
+            </Link>
+            <Link
+              href="/usuarios/crear"
+              className="block px-4 py-2 bg-blue-100 text-blue-900 rounded hover:bg-blue-200 transition text-center"
+            >
+              Registrar Usuario
+            </Link>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">Módulos Disponibles</h2>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <Link href="/libros" className="text-blue-600 hover:underline">
+                Gestión de Libros
+              </Link>
+            </li>
+            <li>
+              <Link href="/ejemplares" className="text-blue-600 hover:underline">
+                Gestión de Ejemplares
+              </Link>
+            </li>
+            <li>
+              <Link href="/usuarios" className="text-blue-600 hover:underline">
+                Gestión de Usuarios
+              </Link>
+            </li>
+            <li>
+              <Link href="/roles" className="text-blue-600 hover:underline">
+                Gestión de Roles
+              </Link>
+            </li>
+            <li>
+              <Link href="/prestamos" className="text-blue-600 hover:underline">
+                Gestión de Préstamos
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }
