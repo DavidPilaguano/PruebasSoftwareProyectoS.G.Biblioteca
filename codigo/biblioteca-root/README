@@ -1,5 +1,149 @@
-npx @nestjs/cli new backend --package-manager npm
+# Biblioteca - Sistema de Gestión de Préstamos
 
-npm install @supabase/supabase-js @nestjs/config
+Sistema de gestión de préstamos de libros con backend en NestJS y frontend en Next.js, utilizando Supabase como base de datos.
 
-npx supabase gen types typescript --project-id jjfahypzwnskfiaydohk > frontend/src/types/supabase.ts
+## Requisitos Previos
+
+- Node.js v20 o superior
+- npm (incluido con Node.js)
+- Cuenta activa en Supabase con proyecto creado
+
+## Configuración Inicial
+
+### 1. Instalar Dependencias
+
+Backend:
+```bash
+cd backend
+npm install
+```
+
+Frontend:
+```bash
+cd frontend
+npm install
+```
+
+### 2. Configurar Variables de Entorno
+
+Backend (crear archivo `backend/.env`):
+```
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_KEY=tu_clave_anon
+PORT=3001
+```
+
+Frontend (crear archivo `frontend/.env`):
+```
+NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anon
+```
+
+Las credenciales se obtienen en Supabase: Settings > API > URL y anon public key.
+
+### 3. Generar Tipos de TypeScript (Opcional)
+
+```bash
+npx supabase gen types typescript --project-id tu-project-id > frontend/src/types/supabase.ts
+```
+
+## Ejecutar la Aplicación
+
+### Modo Desarrollo
+
+Terminal 1 - Backend:
+```bash
+cd backend
+npm run start:dev
+```
+Backend disponible en http://localhost:3001
+
+Terminal 2 - Frontend:
+```bash
+cd frontend
+npm run dev
+```
+Frontend disponible en http://localhost:3000
+
+### Modo Producción
+
+Backend:
+```bash
+cd backend
+npm run build
+npm run start:prod
+```
+
+Frontend:
+```bash
+cd frontend
+npm run build
+npm start
+```
+
+## Estructura del Proyecto
+
+```
+biblioteca-root/
+├── backend/
+│   ├── src/
+│   │   ├── prestamos/       (Módulo de préstamos)
+│   │   ├── supabase/        (Configuración Supabase)
+│   │   └── main.ts
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   │   └── page.tsx     (Página principal)
+│   │   ├── lib/
+│   │   │   └── supabase.ts  (Cliente Supabase)
+│   │   └── types/
+│   │       └── supabase.ts  (Tipos generados)
+│   └── package.json
+├── Archivos SQL/
+│   └── database.sql         (Schema base de datos)
+└── README
+```
+
+## Endpoints Disponibles
+
+POST /prestamos - Crear préstamo
+GET /prestamos - Listar préstamos
+GET /prestamos/:id - Obtener préstamo
+PATCH /prestamos/:id - Actualizar préstamo
+DELETE /prestamos/:id - Eliminar préstamo
+
+## Comandos Útiles
+
+Backend - Pruebas:
+```bash
+npm run test
+npm run test:e2e
+npm run test:cov
+```
+
+Frontend - Linting:
+```bash
+npm run lint
+```
+
+## Solución de Problemas
+
+Error "Las credenciales de Supabase no están configuradas":
+- Verificar que backend/.env contiene SUPABASE_URL y SUPABASE_KEY
+- Reiniciar servidor backend después de crear .env
+
+Error "supabaseUrl is required":
+- Verificar que frontend/.env contiene NEXT_PUBLIC_SUPABASE_URL
+- Recargar navegador después de crear .env
+
+Error "EADDRINUSE: address already in use :::3001":
+- Cambiar PORT en backend/.env a otro disponible
+- O terminar proceso: lsof -ti:3001 | xargs kill
+
+## Notas Importantes
+
+- Backend corre en puerto 3001
+- Frontend corre en puerto 3000
+- Las credenciales de Supabase son requeridas
+- No compartir archivos .env en el repositorio
