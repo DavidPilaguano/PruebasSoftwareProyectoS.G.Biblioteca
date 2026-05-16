@@ -10,6 +10,9 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { RolesModule } from './roles/roles.module';
 import { UsuariosSistemaModule } from './usuarios-sistema/usuarios-sistema.module';
 import { AuditoriaModule } from './auditoria/auditoria.module';
+import { CategoriasModule } from './categorias/categorias.module';
+import { EditorialesModule } from './editoriales/editoriales.module';
+import { AutoresModule } from './autores/autores.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { AuditoriaModule } from './auditoria/auditoria.module';
     RolesModule,
     UsuariosSistemaModule,
     AuditoriaModule,
+    CategoriasModule,
+    EditorialesModule,
+    AutoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],
