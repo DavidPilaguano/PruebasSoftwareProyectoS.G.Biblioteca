@@ -26,20 +26,65 @@ npm install
 
 ### 2. Configurar Variables de Entorno
 
-Backend (crear archivo `backend/.env`):
-```
+#### Backend (crear archivo `backend/.env`):
+
+```env
+# Credenciales de Supabase (RECOMENDADO: usar Service Role Key)
 SUPABASE_URL=https://tu-proyecto.supabase.co
-SUPABASE_KEY=tu_clave_anon
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIs...  # Service Role Key (secret)
+
+# Puerto del servidor backend
 PORT=3001
+
+# URL del frontend REQUERIDA para CORS
+# Sin esto, el frontend no puede comunicarse con el backend
+FRONTEND_URL=http://localhost:3000
 ```
 
-Frontend (crear archivo `frontend/.env`):
-```
-NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anon
+#### Frontend (crear archivo `frontend/.env.local`):
+
+```env
+# URL del servidor backend
+NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
-Las credenciales se obtienen en Supabase: Settings > API > URL y anon public key.
+#### Cómo obtener las credenciales de Supabase:
+
+1. Accede a tu proyecto en [Supabase Dashboard](https://supabase.com/dashboard)
+2. Ve a **Settings → API Keys**
+3. Copia:
+   - **Project URL** → Reemplaza en `SUPABASE_URL` del backend
+   - **Service Role Key** (la que dice "secret") → Reemplaza en `SUPABASE_KEY` del backend
+   
+   ⚠️ **Importante**: Usa **Service Role Key** (no la anon key) porque:
+   - Ignora Row Level Security (RLS) 
+   - Permite que el backend realice todas las operaciones
+   - Es seguro porque nunca se expone al frontend
+
+#### Verificar Row Level Security (RLS)
+
+Si los datos no aparecen en el frontend, verifica el estado de RLS en Supabase:
+
+```sql
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE schemaname = 'public';
+```
+
+Si `rowsecurity` es `true` en algunas tablas:
+- **Opción 1 (Desarrollo rápido)**: Deshabilita RLS:
+  ```sql
+  ALTER TABLE public.ejemplar DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE public.libro DISABLE ROW LEVEL SECURITY;
+  -- ... (repetir para todas las tablas)
+  ```
+
+- **Opción 2 (Producción segura)**: Crea políticas de lectura pública:
+  ```sql
+  CREATE POLICY "public_read" ON public.ejemplar FOR SELECT USING (true);
+  CREATE POLICY "public_read" ON public.libro FOR SELECT USING (true);
+  -- ... (repetir para todas las tablas)
+  ```
 
 ### 3. Generar Tipos de TypeScript (Opcional)
 
@@ -88,16 +133,81 @@ biblioteca-root/
 ├── backend/
 │   ├── src/
 │   │   ├── prestamos/       (Módulo de préstamos)
+│   │   ├── libros/          (Módulo de libros - CRUD completo)
+│   │   ├── ejemplares/      (Módulo de ejemplares - CRUD completo)
+│   │   ├── usuarios/        (Módulo de usuarios - CRUD completo)
+│   │   ├── roles/           (Módulo de roles de usuario - CRUD completo)
+│   │   ├── usuarios-sistema/(Módulo de usuarios de sistema - CRUD completo)
+│   │   ├── auditoria/       (Módulo de auditoría - CRUD completo)
 │   │   ├── supabase/        (Configuración Supabase)
 │   │   └── main.ts
 │   └── package.json
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   └── page.tsx     (Página principal)
+│   │   │   ├── libros/
+│   │   │   ├── ejemplares/
+│   │   │   ├── usuarios/
+│   │   │   ├── roles/
+│   │   │   ├── usuarios-sistema/
+│   │   │   ├── prestamos/
+│   │   │   ├── auditoria/
+│   │   │   └── page.tsx     (Página principal con dashboard)
+│   │   ├── components/
+│   │   │   └── Sidebar.tsx  (Navegación lateral)
 │   │   ├── lib/
+│   │   │   ├── api.ts       (Cliente API centralizado)
 │   │   │   └── supabase.ts  (Cliente Supabase)
 │   │   └── types/
+│   │       ├── biblioteca.ts
+│   │       ├── database.types.ts
+│   │       └── supabase.ts
+│   └── package.json
+└── supabase/
+    └── schema.sql           (Estructura completa de la base de datos)
+```
+
+## Cambios Implementados
+
+### Backend (NestJS)
+
+✅ **Módulos CRUD Completos Implementados**:
+- **Libros**: Gestión de títulos (requiere id_categoria e id_editorial)
+- **Ejemplares**: Gestión de copias de libros (con estados: DISPONIBLE, PRESTADO, PERDIDO, DANIADO, MANTENIMIENTO)
+- **Usuarios**: Gestión de miembros de la biblioteca (con nombres complejos: primer_nombre, segundo_nombre, etc.)
+- **Roles de Usuario**: Gestión de roles con límites de préstamos (rol_usuario, no rol)
+- **Usuarios de Sistema**: Cuentas de administración con contraseñas hasheadas en SHA256
+- **Auditoría**: Registro de cambios en la base de datos
+
+✅ **Configuración CORS**: Backend configurado para aceptar solicitudes del frontend en `http://localhost:3000` mediante la variable `FRONTEND_URL`
+
+✅ **Validaciones de DTOs**: Todos los DTOs incluyen validaciones de campos requeridos y tipos correctos
+
+✅ **Manejo de Errores**: BadRequestException para errores de validación, NotFoundException para registros no encontrados
+
+### Frontend (Next.js)
+
+✅ **Páginas CRUD para Cada Módulo**:
+- `/libros` - Gestión de libros
+- `/ejemplares` - Gestión de ejemplares
+- `/usuarios` - Gestión de usuarios
+- `/roles` - Gestión de roles
+- `/usuarios-sistema` - Gestión de usuarios de sistema
+- `/prestamos` - Gestión de préstamos
+- `/auditoria` - Registro de auditoría
+
+✅ **API Centralizada**: Todas las peticiones al backend van a través de `lib/api.ts` con cliente HTTP unificado
+
+✅ **Navegación Sidebar**: Menú lateral para acceder a todos los módulos
+
+### Base de Datos (Supabase)
+
+✅ **Schema Completo**: 13 tablas con relaciones, constraints y tipos correctos
+- Tablas: auditoria, autor, categoria, editorial, ejemplar, libro, libro_autor, prestamo, reserva, rol_usuario, sancion, usuario, usuario_sistema
+
+✅ **Constraints Validados**: CHECK constraints, UNIQUE constraints, FOREIGN KEY relationships
+
+✅ **Enums Implementados**: Estados correctos para cada tabla (ejemplar, usuario, prestamo, etc.)
 │   │       └── supabase.ts  (Tipos generados)
 │   └── package.json
 ├── Archivos SQL/

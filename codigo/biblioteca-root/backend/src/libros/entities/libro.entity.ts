@@ -1,0 +1,9 @@
+export class Libro {
+  id_libro: number;
+  isbn?: string;
+  titulo: string;
+  anio_publicacion?: number;
+  descripcion?: string;
+  id_categoria: number;
+  id_editorial: number;
+}
