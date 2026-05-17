@@ -7,6 +7,14 @@ import { UpdateLibroDto } from './dto/update-libro.dto';
 export class LibrosController {
   constructor(private readonly librosService: LibrosService) {}
 
+  /* @Controller('libros')
+  export class LibrosController {
+  constructor(private readonly librosService: LibrosService) {}
+  */
+  @Get('dashboard/stats')
+  getDashboardStats(){
+    return this.librosService.getDashboardStats()
+  }  
   @Post()
   create(@Body() createLibroDto: CreateLibroDto) {
     return this.librosService.create(createLibroDto);

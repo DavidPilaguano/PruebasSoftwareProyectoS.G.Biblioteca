@@ -29,6 +29,7 @@ export const apiCall = async (
 // Libros
 export const librosApi = {
   getAll: () => apiCall('/libros'),
+  getDashboardStats: () => apiCall('/libros/dashboard/stats'),
   getById: (id: number) => apiCall(`/libros/${id}`),
   create: (data: unknown) => apiCall('/libros', 'POST', data),
   update: (id: number, data: unknown) => apiCall(`/libros/${id}`, 'PATCH', data),

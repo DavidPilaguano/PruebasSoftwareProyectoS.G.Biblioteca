@@ -2,25 +2,41 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { prestamosApi } from '@/lib/api';
+import { prestamosApi, librosApi } from '@/lib/api'; // Importamos ambas APIs juntas
+
+interface DashboardStats {
+  libros: number;
+  usuarios: number;
+  ejemplares: number;
+}
 
 export default function Dashboard() {
   const [prestamosCount, setPrestamosCount] = useState(0);
+  const [stats, setStats] = useState<DashboardStats>({ libros: 0, usuarios: 0, ejemplares: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const prestamos = await prestamosApi.getAll();
+        setLoading(true);
+        
+        // Ejecutamos ambas peticiones al backend en paralelo para ahorrar tiempo
+        const [prestamos, statsData] = await Promise.all([
+          prestamosApi.getAll(),
+          librosApi.getDashboardStats()
+        ]);
+
+        // Asignamos las respuestas a sus respectivos estados
         setPrestamosCount(prestamos.length);
+        setStats(statsData);
       } catch (error) {
-        console.error('Error cargando datos:', error);
+        console.error('Error cargando datos del dashboard:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchDashboardData();
   }, []);
 
   return (
@@ -32,26 +48,36 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Préstamos Activos */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-slate-600 text-sm font-medium">Préstamos Activos</div>
           <div className="mt-2 text-3xl font-bold text-slate-900">
-            {loading ? '-' : prestamosCount}
+            {loading ? '...' : prestamosCount}
           </div>
         </div>
 
+        {/* Libros en Sistema */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-slate-600 text-sm font-medium">Libros en Sistema</div>
-          <div className="mt-2 text-3xl font-bold text-slate-900">-</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">
+            {loading ? '...' : stats.libros}
+          </div>
         </div>
 
+        {/* Usuarios Registrados */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-slate-600 text-sm font-medium">Usuarios Registrados</div>
-          <div className="mt-2 text-3xl font-bold text-slate-900">-</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">
+            {loading ? '...' : stats.usuarios}
+          </div>
         </div>
 
+        {/* Ejemplares Disponibles */}
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-slate-600 text-sm font-medium">Ejemplares Disponibles</div>
-          <div className="mt-2 text-3xl font-bold text-slate-900">-</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900">
+            {loading ? '...' : stats.ejemplares}
+          </div>
         </div>
       </div>
 
