@@ -57,3 +57,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .vercel
+
+
+#Pruebas de software mediante SonarQube
+# SonarQube temporals
+.scannerwork/
+.sonar/
+
+# Cobertura de pruebas (si llegas a generar reportes de Jest)
+coverage/

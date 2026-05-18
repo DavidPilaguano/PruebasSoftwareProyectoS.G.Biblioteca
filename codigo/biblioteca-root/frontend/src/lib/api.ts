@@ -86,7 +86,7 @@ export const auditoriaApi = {
   getAll: () => apiCall('/auditoria'),
 };
 
-// Categorías
+
 export const categoriasApi = {
   getAll: () => apiCall('/categorias'),
   getById: (id: number) => apiCall(`/categorias/${id}`),
@@ -95,7 +95,6 @@ export const categoriasApi = {
   delete: (id: number) => apiCall(`/categorias/${id}`, 'DELETE'),
 };
 
-// Editoriales
 export const editorialesApi = {
   getAll: () => apiCall('/editoriales'),
   getById: (id: number) => apiCall(`/editoriales/${id}`),
@@ -109,7 +108,6 @@ export const authApi = {
     apiCall('/auth/login', 'POST', { username, password_hash }),
 };
 
-// Autores
 export const autoresApi = {
   getAll: () => apiCall('/autores'),
   getById: (id: number) => apiCall(`/autores/${id}`),
