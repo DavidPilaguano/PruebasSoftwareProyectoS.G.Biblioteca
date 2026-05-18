@@ -24,8 +24,16 @@ export class EjemplaresService {
   async findAll() {
     const { data, error } = await this.supabase.client
       .from('ejemplar')
-      .select('*');
-
+      //.select('*');
+      .select(`
+      id_ejemplar,
+      codigo_barra,
+      estado,
+      ubicacion_fisica,
+      libro (
+      titulo
+      )
+    `);
     if (error) throw new BadRequestException(error.message);
     return data || [];
   }

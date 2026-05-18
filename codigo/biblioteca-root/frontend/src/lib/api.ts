@@ -104,6 +104,11 @@ export const editorialesApi = {
   delete: (id: number) => apiCall(`/editoriales/${id}`, 'DELETE'),
 };
 
+export const authApi = {
+  login: (username: string, password_hash: string) => 
+    apiCall('/auth/login', 'POST', { username, password_hash }),
+};
+
 // Autores
 export const autoresApi = {
   getAll: () => apiCall('/autores'),

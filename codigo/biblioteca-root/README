@@ -257,3 +257,9 @@ Error "EADDRINUSE: address already in use :::3001":
 - Frontend corre en puerto 3000
 - Las credenciales de Supabase son requeridas
 - No compartir archivos .env en el repositorio
+
+
+David Pilaguano-Pruebas
+Actualizacion del Frontend mediante login, dependencias necesarias para la realizacion 
+npm install @nestjs/jwt passport-jwt bcrypt
+npm install --save-dev @types/passport-jwt @types/bcrypt

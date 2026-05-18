@@ -1,22 +1,18 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Sidebar from "@/components/Sidebar";
+import { Geist, Geist_Mono } from 'next/font/google';
+import { AuthProvider } from '@/context/AuthContext';
+//import { Sidebar } from '@/components/Sidebar'; 
+import Sidebar from "@/components/Sidebar"
+import './globals.css'; // O la ruta de tus estilos globales
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
-
-export const metadata: Metadata = {
-  title: "Biblioteca - Sistema de Gestión",
-  description: "Sistema de gestión de préstamos de libros",
-};
 
 export default function RootLayout({
   children,
@@ -29,10 +25,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} w-full h-full m-0 p-0`}
     >
       <body className="w-full h-full m-0 p-0 bg-white">
-        <Sidebar />
-        <main className="md:ml-64 overflow-auto min-h-screen pt-16 md:pt-0 bg-gray-50">
-          <div className="p-8">{children}</div>
-        </main>
+        {/* 🔐 Envolvemos con el proveedor de autenticación */}
+        <AuthProvider>
+          <div className="flex min-h-screen w-full relative">
+            <Sidebar />
+            <main className="flex-1 md:ml-64 overflow-auto min-h-screen bg-gray-50">
+              <div className="p-8">{children}</div>
+            </main>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );

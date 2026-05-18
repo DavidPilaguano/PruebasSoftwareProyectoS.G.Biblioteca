@@ -1,5 +1,12 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.105.4"
+    "@nestjs/jwt": "^11.0.2",
+    "@supabase/supabase-js": "^2.105.4",
+    "bcrypt": "^6.0.0",
+    "passport-jwt": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/passport-jwt": "^4.0.1"
   }
 }

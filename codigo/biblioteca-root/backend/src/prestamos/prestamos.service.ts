@@ -21,7 +21,22 @@ export class PrestamosService {
   async findAll() {
     const { data, error } = await this.supabase.client
       .from('prestamo')
-      .select('*');
+      .select(`
+      id_prestamo,
+      fecha_prestamo,
+      estado,
+        usuario (
+        primer_nombre,
+        primer_apellido,
+        cedula
+      ),
+      ejemplar (
+        codigo_barra,
+        libro (
+          titulo
+        )
+      )
+    `);
 
     if (error) throw new BadRequestException(error.message);
     return data;
