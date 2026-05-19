@@ -46,6 +46,9 @@ export class EjemplaresService {
       .single();
 
     if (error) throw new NotFoundException('Ejemplar no encontrado');
+    if (!data) {
+    throw new NotFoundException('Ejemplar no encontrado');
+  }
     return data;
   }
 
