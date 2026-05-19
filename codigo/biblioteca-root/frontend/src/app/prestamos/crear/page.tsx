@@ -20,6 +20,7 @@ export default function CrearPrestamoPage() {
     id_usuario_sistema: 0,
     id_ejemplar: 0,
     fecha_devolucion_esperada: '',
+    estado: 'ACTIVO',
   });
 
   useEffect(() => {

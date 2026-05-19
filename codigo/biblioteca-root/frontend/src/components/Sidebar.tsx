@@ -48,18 +48,20 @@ export default function Sidebar() {
               Estudiantes
             </Link>
           </div>
-
+          
           <div className="mt-6">
             <p className="px-4 py-1 text-xs font-semibold text-slate-400 uppercase tracking-wider">Flujo de Préstamos</p>
             <Link href="/prestamos" className="block px-4 py-2 rounded hover:bg-blue-50 text-slate-900 transition text-sm mt-1">
               Préstamos
             </Link>
-            <Link href="/reservas" className="block px-4 py-2 rounded hover:bg-blue-50 text-slate-900 transition text-sm">
+              {/* 
+              <Link href="/reservas" className="block px-4 py-2 rounded hover:bg-blue-50 text-slate-900 transition text-sm">
               Reservas
-            </Link>
-            <Link href="/sanciones" className="block px-4 py-2 rounded hover:bg-blue-50 text-slate-900 transition text-sm">
+              </Link>
+              <Link href="/sanciones" className="block px-4 py-2 rounded hover:bg-blue-50 text-slate-900 transition text-sm">
               Sanciones
-            </Link>
+              </Link>
+              */}
           </div>
 
           {/* ⚙️ SECCIONES DE GESTIÓN AVANZADA (Exclusivas de ADMINISTRADOR) */}

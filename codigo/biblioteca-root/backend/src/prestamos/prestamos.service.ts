@@ -22,21 +22,26 @@ export class PrestamosService {
     const { data, error } = await this.supabase.client
       .from('prestamo')
       .select(`
-      id_prestamo,
-      fecha_prestamo,
-      estado,
+        id_prestamo,
+        id_usuario,                 
+        id_usuario_sistema,         
+        id_ejemplar,                
+        fecha_prestamo,
+        fecha_devolucion_esperada,  
+        fecha_devolucion_real,      
+        estado,
         usuario (
-        primer_nombre,
-        primer_apellido,
-        cedula
-      ),
-      ejemplar (
-        codigo_barra,
-        libro (
-          titulo
+          primer_nombre,
+          primer_apellido,
+          cedula
+        ),
+        ejemplar (
+          codigo_barra,
+          libro (
+            titulo
+          )
         )
-      )
-    `);
+      `);
 
     if (error) throw new BadRequestException(error.message);
     return data;

@@ -166,12 +166,26 @@ export interface Prestamo {
   usuario_sistema?: UsuarioSistema;
   ejemplar?: Ejemplar;
 }
-
-export interface CreatePrestamoDto {
+{
+  /*
+  export interface CreatePrestamoDto {
   id_usuario: number;
   id_usuario_sistema: number;
   id_ejemplar: number;
   fecha_devolucion_esperada?: string;
+}
+
+  */
+}
+
+// En tu archivo types/biblioteca.ts
+export interface CreatePrestamoDto {
+  id_usuario: number;
+  id_usuario_sistema: number;
+  id_ejemplar: number;
+  fecha_devolucion_esperada: string;
+  estado: string;               
+  fecha_devolucion_real?: string; 
 }
 
 export interface UpdatePrestamoDto {

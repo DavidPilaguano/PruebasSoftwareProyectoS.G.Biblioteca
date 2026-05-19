@@ -3,6 +3,7 @@ import { IsOptional, IsString } from "class-validator";
 export class Prestamo {
   @IsString()
   @IsOptional()
+  //@PrimaryGeneratedColumn()
   id_prestamo!: number;
     @IsString()
   @IsOptional()
@@ -17,4 +18,4 @@ export class Prestamo {
   fecha_devolucion_esperada?: string;
   estado?: string;
 }
-
+  
