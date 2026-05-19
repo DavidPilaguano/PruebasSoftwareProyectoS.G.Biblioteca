@@ -38,6 +38,9 @@ export class EditorialesService {
       .single();
 
     if (error) throw new NotFoundException('Editorial no encontrada');
+    if (!data) {
+    throw new NotFoundException('Editorial no encontrada');
+  }
     return data;
   }
 
