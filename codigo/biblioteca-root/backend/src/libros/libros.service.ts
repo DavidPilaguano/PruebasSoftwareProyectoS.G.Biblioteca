@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateLibroDto } from './dto/create-libro.dto';
 import { UpdateLibroDto } from './dto/update-libro.dto';
@@ -30,6 +34,11 @@ export class LibrosService {
       };
     } catch (error) {
       console.log(error);
+      return {
+        libros: 0,
+        usuarios: 0,
+        ejemplares: 0,
+      };
     }
   }
 

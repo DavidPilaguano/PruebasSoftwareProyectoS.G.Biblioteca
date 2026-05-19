@@ -26,10 +26,10 @@ export class AuthService {
 
     // Comparamos la contraseña en texto plano con el hash de la Base de Datos
     // NOTA: Si metiste contraseñas en texto plano para probar, cambia esto por: if (password_plain !== usuario.password_hash)
+    const passwordHash = String(usuario.password_hash);
     const isPasswordValid =
-      (await bcrypt
-        .compare(password_plain, usuario.password_hash)
-        .catch(() => false)) || password_plain === usuario.password_hash;
+      (await bcrypt.compare(password_plain, passwordHash).catch(() => false)) ||
+      password_plain === passwordHash;
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciales incorrectas');

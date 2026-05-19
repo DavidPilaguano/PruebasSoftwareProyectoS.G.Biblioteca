@@ -33,7 +33,7 @@ export class UsuariosSistemaService {
     }
 
     // Si por error el frontend manda 'password_hash' en lugar de 'password', lo manejamos
-    const passwordRaw = dto.password || (dto as any).password_hash;
+    const passwordRaw = dto.password || String((dto as any).password_hash || '');
     if (!passwordRaw) {
       throw new BadRequestException(
         'La contraseña es obligatoria para la creación',

@@ -230,7 +230,7 @@ describe('LibrosService', () => {
         .fn()
         .mockRejectedValueOnce(new Error('DB Error'));
       const result = await service.getDashboardStats();
-      expect(result).toBeUndefined();
+      expect(result).toEqual({ libros: 0, usuarios: 0, ejemplares: 0 });
     });
   });
 });

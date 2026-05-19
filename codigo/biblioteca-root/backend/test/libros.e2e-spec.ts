@@ -8,8 +8,7 @@ import { AppModule } from '../src/app.module';
 describe('Libros (e2e)', () => {
   let app: INestApplication;
   let createdId: number | null = null;
-  let creationFailed = false; // Bandera para controlar el flujo
-
+  let creationFailed = false; 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -47,7 +46,7 @@ describe('Libros (e2e)', () => {
       console.error('--- ERROR CRÍTICO EN POST /libros ---');
       console.error('Status:', response.status);
       console.error('Body:', JSON.stringify(response.body, null, 2));
-      creationFailed = true; // Marcamos fallo para saltar los demás
+      creationFailed = true;
     }
 
     expect(response.status).toBe(201);
