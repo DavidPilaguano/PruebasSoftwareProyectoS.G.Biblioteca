@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateLibroDto } from './dto/create-libro.dto';
 import { UpdateLibroDto } from './dto/update-libro.dto';
@@ -76,7 +71,7 @@ export class LibrosService {
 
   async findOne(id: number) {
     const { data, error } = await this.supabase.client
-      .from('libros')
+      .from('libro')
       .select('*')
       .eq('id_libro', id)
       .single();
@@ -89,11 +84,12 @@ export class LibrosService {
     return data;
   }
 
-  async update(id: number, updateDto: any) {
+  async update(id: number, updateDto: UpdateLibroDto) {
     const { data, error } = await this.supabase.client
-      .from('libros')
+      .from('libro')
       .update(updateDto)
       .eq('id_libro', id)
+      .select('*')
       .single();
 
     if (error) throw new BadRequestException(error.message);

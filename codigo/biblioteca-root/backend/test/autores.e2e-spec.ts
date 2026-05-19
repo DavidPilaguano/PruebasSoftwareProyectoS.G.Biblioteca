@@ -83,6 +83,6 @@ describe('Autores (e2e)', () => {
       .delete(`/autores/${createdId}`)
       .expect(200);
 
-    createdId = null; // Successfully deleted
+    createdId = null; 
   });
 });

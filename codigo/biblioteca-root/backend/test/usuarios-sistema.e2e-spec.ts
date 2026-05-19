@@ -7,7 +7,8 @@ import { AppModule } from '../src/app.module';
 
 describe('UsuariosSistema (e2e)', () => {
   let app: INestApplication;
-  let createdId: number;
+  let createdId: number | null = null;
+  let server: Parameters<typeof request>[0];
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -17,16 +18,17 @@ describe('UsuariosSistema (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     await app.init();
+    server = app.getHttpServer() as Parameters<typeof request>[0];
   });
 
   afterAll(async () => {
     // Clean up to avoid leaving garbage in real DB if DELETE wasn't called/failed
-    if (createdId) {
+    if (createdId !== null) {
       try {
-        await request(app.getHttpServer()).delete(
-          `/usuarios-sistema/${createdId}`,
-        );
-      } catch (e) {}
+        await request(server).delete(`/usuarios-sistema/${createdId}`);
+      } catch (error) {
+        console.warn('Cleanup usuarios-sistema fallo');
+      }
     }
     if (app) await app.close();
   });
@@ -40,7 +42,7 @@ describe('UsuariosSistema (e2e)', () => {
       rol_sistema: 'ADMINISTRADOR',
     };
 
-    const response = await request(app.getHttpServer())
+    const response = await request(server)
       .post('/usuarios-sistema')
       .send(createDto);
 
@@ -48,31 +50,32 @@ describe('UsuariosSistema (e2e)', () => {
     // If it fails with 400, make sure to provide valid data.
     if (response.status === 201) {
       // Adjust according to the actual primary key name returned
+      const body = response.body as {
+        id?: number;
+        id_usuariossistema?: number;
+        id_usuario?: number;
+        id_rol?: number;
+      };
       createdId =
-        response.body.id ||
-        response.body.id_usuariossistema ||
-        response.body.id_usuario ||
-        response.body.id_rol;
-      expect(createdId).toBeDefined();
+        body.id ?? body.id_usuariossistema ?? body.id_usuario ?? body.id_rol ?? null;
+      expect(createdId).not.toBeNull();
     }
   });
 
   it('/usuarios-sistema (GET)', () => {
-    return request(app.getHttpServer()).get('/usuarios-sistema').expect(200);
+    return request(server).get('/usuarios-sistema').expect(200);
   });
 
   it('/usuarios-sistema/:id (GET)', async () => {
-    if (!createdId) {
+    if (createdId === null) {
       console.warn('Skipping GET by ID because creation failed');
       return;
     }
-    await request(app.getHttpServer())
-      .get(`/usuarios-sistema/${createdId}`)
-      .expect(200);
+    await request(server).get(`/usuarios-sistema/${createdId}`).expect(200);
   });
 
   it('/usuarios-sistema/:id (PATCH)', async () => {
-    if (!createdId) {
+    if (createdId === null) {
       console.warn('Skipping PATCH because creation failed');
       return;
     }
@@ -84,21 +87,19 @@ describe('UsuariosSistema (e2e)', () => {
       rol_sistema: 'ADMINISTRADOR',
     };
 
-    await request(app.getHttpServer())
+    await request(server)
       .patch(`/usuarios-sistema/${createdId}`)
       .send(updateDto)
       .expect(200);
   });
 
   it('/usuarios-sistema/:id (DELETE)', async () => {
-    if (!createdId) {
+    if (createdId === null) {
       console.warn('Skipping DELETE because creation failed');
       return;
     }
-    await request(app.getHttpServer())
-      .delete(`/usuarios-sistema/${createdId}`)
-      .expect(200);
+    await request(server).delete(`/usuarios-sistema/${createdId}`).expect(200);
 
-    createdId = null; // Successfully deleted
+    createdId = null;
   });
 });

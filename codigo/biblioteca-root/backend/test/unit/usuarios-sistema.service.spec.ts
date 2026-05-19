@@ -2,7 +2,6 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import {
   BadRequestException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsuariosSistemaService } from '../../src/usuarios-sistema/usuarios-sistema.service';
@@ -10,15 +9,21 @@ import { AuthService } from '../../src/usuarios-sistema/auth.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
 import { JwtService } from '@nestjs/jwt';
 import { createQueryMock } from './supabase-client.mock';
+import type { CreateUsuarioSistemaDto } from '../../src/usuarios-sistema/dto/create-usuario-sistema.dto';
+import type { UpdateUsuarioSistemaDto } from '../../src/usuarios-sistema/dto/update-usuario-sistema.dto';
 
 describe('UsuariosSistemaService', () => {
   let service: UsuariosSistemaService;
-  let supabaseMock: any;
-  let query: any;
+  let fromMock: jest.Mock;
+  let supabaseMock: {
+    client: { from: jest.MockedFunction<(table: string) => typeof query> };
+  };
+  let query: ReturnType<typeof createQueryMock>;
 
   beforeEach(async () => {
     query = createQueryMock();
-    supabaseMock = { client: { from: jest.fn().mockReturnValue(query) } };
+    fromMock = jest.fn().mockReturnValue(query);
+    supabaseMock = { client: { from: fromMock } };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -31,7 +36,7 @@ describe('UsuariosSistemaService', () => {
   });
 
   it('should create usuario del sistema y ocultar password_hash', async () => {
-    const dto = {
+    const dto: CreateUsuarioSistemaDto = {
       username: 'admin',
       password: 'secret',
       rol_sistema: 'ADMINISTRADOR',
@@ -48,8 +53,8 @@ describe('UsuariosSistemaService', () => {
       error: null,
     };
 
-    await expect(service.create(dto as any)).resolves.toEqual(expected);
-    expect(supabaseMock.client.from).toHaveBeenCalledWith('usuario_sistema');
+    await expect(service.create(dto)).resolves.toEqual(expected);
+    expect(fromMock).toHaveBeenCalledWith('usuario_sistema');
   });
 
   it('should throw when rol_sistema es inválido', async () => {
@@ -58,7 +63,7 @@ describe('UsuariosSistemaService', () => {
         username: 'admin',
         password: 'secret',
         rol_sistema: 'INVALIDO',
-      } as any),
+      } as CreateUsuarioSistemaDto),
     ).rejects.toThrow(BadRequestException);
   });
 
@@ -94,7 +99,7 @@ describe('UsuariosSistemaService', () => {
   });
 
   it('should update usuario del sistema y ocultar password_hash', async () => {
-    const dto = { password: 'newSecret' };
+    const dto: UpdateUsuarioSistemaDto = { password: 'newSecret' };
     const expected = {
       id_usuario_sistema: 1,
       username: 'admin',
@@ -105,7 +110,7 @@ describe('UsuariosSistemaService', () => {
       error: null,
     };
 
-    await expect(service.update(1, dto as any)).resolves.toEqual(expected);
+    await expect(service.update(1, dto)).resolves.toEqual(expected);
     expect(query.update).toHaveBeenCalled();
   });
 
@@ -119,9 +124,9 @@ describe('UsuariosSistemaService', () => {
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let supabaseMock: any;
-  let jwtServiceMock: any;
-  let query: any;
+  let supabaseMock: { client: { from: jest.MockedFunction<(table: string) => typeof query> } };
+  let jwtServiceMock: { sign: jest.MockedFunction<(payload: unknown) => string> };
+  let query: ReturnType<typeof createQueryMock>;
 
   beforeEach(async () => {
     query = createQueryMock();

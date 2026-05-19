@@ -1,18 +1,22 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { RolesService } from '../../src/roles/roles.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
 import { createQueryMock } from './supabase-client.mock';
+import type { CreateRolDto } from '../../src/roles/dto/create-rol.dto';
+import type { UpdateRolDto } from '../../src/roles/dto/update-rol.dto';
 
 describe('RolesService', () => {
   let service: RolesService;
-  let supabaseMock: any;
-  let query: any;
+  let fromMock: jest.Mock;
+  let supabaseMock: { client: { from: jest.MockedFunction<(table: string) => typeof query> } };
+  let query: ReturnType<typeof createQueryMock>;
 
   beforeEach(async () => {
     query = createQueryMock();
-    supabaseMock = { client: { from: jest.fn().mockReturnValue(query) } };
+    fromMock = jest.fn().mockReturnValue(query);
+    supabaseMock = { client: { from: fromMock } };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -25,19 +29,19 @@ describe('RolesService', () => {
   });
 
   it('should create nuevo rol', async () => {
-    const dto = { max_prestamos: 5, dias_prestamo: 14 };
+    const dto: CreateRolDto = { max_prestamos: 5, dias_prestamo: 14 };
     const expected = { id_rol: 1, ...dto };
 
     query.result = { data: expected, error: null };
 
-    await expect(service.create(dto as any)).resolves.toEqual(expected);
-    expect(supabaseMock.client.from).toHaveBeenCalledWith('rol_usuario');
+    await expect(service.create(dto)).resolves.toEqual(expected);
+    expect(fromMock).toHaveBeenCalledWith('rol_usuario');
     expect(query.insert).toHaveBeenCalledWith([dto]);
   });
 
   it('should throw when max_prestamos or dias_prestamo are missing', async () => {
     await expect(
-      service.create({ max_prestamos: undefined } as any),
+      service.create({ max_prestamos: undefined } as CreateRolDto),
     ).rejects.toThrow(BadRequestException);
   });
 
@@ -46,7 +50,7 @@ describe('RolesService', () => {
     query.result = { data: expected, error: null };
 
     await expect(service.findAll()).resolves.toEqual(expected);
-    expect(supabaseMock.client.from).toHaveBeenCalledWith('rol_usuario');
+    expect(fromMock).toHaveBeenCalledWith('rol_usuario');
   });
 
   it('should return rol por ID', async () => {
@@ -58,11 +62,11 @@ describe('RolesService', () => {
   });
 
   it('should update rol', async () => {
-    const dto = { max_prestamos: 10 };
+    const dto: UpdateRolDto = { max_prestamos: 10 };
     const expected = { id_rol: 1, ...dto };
     query.result = { data: expected, error: null };
 
-    await expect(service.update(1, dto as any)).resolves.toEqual(expected);
+    await expect(service.update(1, dto)).resolves.toEqual(expected);
     expect(query.update).toHaveBeenCalledWith(dto);
   });
 

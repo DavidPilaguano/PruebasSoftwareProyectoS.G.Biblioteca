@@ -1,18 +1,22 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { UsuariosService } from '../../src/usuarios/usuarios.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
 import { createQueryMock } from './supabase-client.mock';
+import type { CreateUsuarioDto } from '../../src/usuarios/dto/create-usuario.dto';
+import type { UpdateUsuarioDto } from '../../src/usuarios/dto/update-usuario.dto';
 
 describe('UsuariosService', () => {
   let service: UsuariosService;
-  let supabaseMock: any;
-  let query: any;
+  let fromMock: jest.Mock;
+  let supabaseMock: { client: { from: jest.MockedFunction<(table: string) => typeof query> } };
+  let query: ReturnType<typeof createQueryMock>;
 
   beforeEach(async () => {
     query = createQueryMock();
-    supabaseMock = { client: { from: jest.fn().mockReturnValue(query) } };
+    fromMock = jest.fn().mockReturnValue(query);
+    supabaseMock = { client: { from: fromMock } };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -25,18 +29,22 @@ describe('UsuariosService', () => {
   });
 
   it('should create nuevo usuario', async () => {
-    const dto = { id_rol: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' };
+    const dto: CreateUsuarioDto = {
+      id_rol: 1,
+      primer_nombre: 'Ana',
+      primer_apellido: 'Lopez',
+    };
     const expected = { id_usuario: 1, ...dto };
 
     query.result = { data: expected, error: null };
 
-    await expect(service.create(dto as any)).resolves.toEqual(expected);
-    expect(supabaseMock.client.from).toHaveBeenCalledWith('usuario');
+    await expect(service.create(dto)).resolves.toEqual(expected);
+    expect(fromMock).toHaveBeenCalledWith('usuario');
     expect(query.insert).toHaveBeenCalledWith([{ ...dto, estado: 'ACTIVO' }]);
   });
 
   it('should throw when id_rol is missing', async () => {
-    await expect(service.create({} as any)).rejects.toThrow(
+    await expect(service.create({} as CreateUsuarioDto)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -48,7 +56,7 @@ describe('UsuariosService', () => {
     query.result = { data: expected, error: null };
 
     await expect(service.findAll()).resolves.toEqual(expected);
-    expect(supabaseMock.client.from).toHaveBeenCalledWith('usuario');
+    expect(fromMock).toHaveBeenCalledWith('usuario');
   });
 
   it('should return usuario por ID', async () => {
@@ -64,11 +72,14 @@ describe('UsuariosService', () => {
   });
 
   it('should update usuario', async () => {
-    const dto = { primer_nombre: 'Ana', primer_apellido: 'Martínez' };
+    const dto: UpdateUsuarioDto = {
+      primer_nombre: 'Ana',
+      primer_apellido: 'Martínez',
+    };
     const expected = { id_usuario: 1, ...dto };
     query.result = { data: expected, error: null };
 
-    await expect(service.update(1, dto as any)).resolves.toEqual(expected);
+    await expect(service.update(1, dto)).resolves.toEqual(expected);
     expect(query.update).toHaveBeenCalledWith(dto);
   });
 

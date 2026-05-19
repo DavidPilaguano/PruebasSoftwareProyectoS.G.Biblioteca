@@ -44,7 +44,7 @@ export class LibrosController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLibroDto: UpdateLibroDto,
   ) {
-    return this.librosService.update(id, updateLibroDto);
+    return this.librosService.update(+id, updateLibroDto);
   }
 
   @Delete(':id')

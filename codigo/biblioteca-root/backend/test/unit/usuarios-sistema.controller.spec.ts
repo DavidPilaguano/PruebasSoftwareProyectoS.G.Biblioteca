@@ -2,20 +2,33 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { UsuariosSistemaController } from '../../src/usuarios-sistema/usuarios-sistema.controller';
 import { UsuariosSistemaService } from '../../src/usuarios-sistema/usuarios-sistema.service';
+import type { CreateUsuarioSistemaDto } from '../../src/usuarios-sistema/dto/create-usuario-sistema.dto';
+import type { UpdateUsuarioSistemaDto } from '../../src/usuarios-sistema/dto/update-usuario-sistema.dto';
 
 describe('UsuariosSistemaController', () => {
   let controller: UsuariosSistemaController;
-  let service: UsuariosSistemaService;
-
-  const mockUsuariosSistemaService = {
-    create: jest.fn(),
-    findAll: jest.fn(),
-    findOne: jest.fn(),
-    update: jest.fn(),
-    remove: jest.fn(),
-  };
+  let createMock: jest.Mock;
+  let findAllMock: jest.Mock;
+  let findOneMock: jest.Mock;
+  let updateMock: jest.Mock;
+  let removeMock: jest.Mock;
+  let mockUsuariosSistemaService: Partial<UsuariosSistemaService>;
 
   beforeEach(async () => {
+    createMock = jest.fn();
+    findAllMock = jest.fn();
+    findOneMock = jest.fn();
+    updateMock = jest.fn();
+    removeMock = jest.fn();
+
+    mockUsuariosSistemaService = {
+      create: createMock,
+      findAll: findAllMock,
+      findOne: findOneMock,
+      update: updateMock,
+      remove: removeMock,
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsuariosSistemaController],
       providers: [
@@ -29,7 +42,6 @@ describe('UsuariosSistemaController', () => {
     controller = module.get<UsuariosSistemaController>(
       UsuariosSistemaController,
     );
-    service = module.get<UsuariosSistemaService>(UsuariosSistemaService);
   });
 
   it('should be defined', () => {
@@ -38,57 +50,57 @@ describe('UsuariosSistemaController', () => {
 
   describe('create', () => {
     it('should create a new record', async () => {
-      const dto = {
-        /* mock data */
-      } as any;
+      const dto: CreateUsuarioSistemaDto = {
+        username: 'admin',
+        password: 'secret',
+        rol_sistema: 'ADMINISTRADOR',
+      };
       const result = { id: 1, ...dto };
-      jest.spyOn(service, 'create').mockResolvedValue(result);
+      createMock.mockResolvedValue(result);
 
       expect(await controller.create(dto)).toBe(result);
-      expect(service.create).toHaveBeenCalledWith(dto);
+      expect(createMock).toHaveBeenCalledWith(dto);
     });
   });
 
   describe('findAll', () => {
     it('should return an array of records', async () => {
       const result = [{ id: 1 }];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result as any);
+      findAllMock.mockResolvedValue(result);
 
       expect(await controller.findAll()).toBe(result);
-      expect(service.findAll).toHaveBeenCalled();
+      expect(findAllMock).toHaveBeenCalled();
     });
   });
 
   describe('findOne', () => {
     it('should return a single record', async () => {
       const result = { id: 1 };
-      jest.spyOn(service, 'findOne').mockResolvedValue(result as any);
+      findOneMock.mockResolvedValue(result);
 
       expect(await controller.findOne(1)).toBe(result);
-      expect(service.findOne).toHaveBeenCalledWith(1);
+      expect(findOneMock).toHaveBeenCalledWith(1);
     });
   });
 
   describe('update', () => {
     it('should update a record', async () => {
-      const dto = {
-        /* mock data */
-      } as any;
+      const dto: UpdateUsuarioSistemaDto = { password: 'newSecret' };
       const result = { id: 1, ...dto };
-      jest.spyOn(service, 'update').mockResolvedValue(result);
+      updateMock.mockResolvedValue(result);
 
       expect(await controller.update(1, dto)).toBe(result);
-      expect(service.update).toHaveBeenCalledWith(1, dto);
+      expect(updateMock).toHaveBeenCalledWith(1, dto);
     });
   });
 
   describe('remove', () => {
     it('should remove a record', async () => {
       const result = { deleted: true };
-      jest.spyOn(service, 'remove').mockResolvedValue(result);
+      removeMock.mockResolvedValue(result);
 
       expect(await controller.remove(1)).toBe(result);
-      expect(service.remove).toHaveBeenCalledWith(1);
+      expect(removeMock).toHaveBeenCalledWith(1);
     });
   });
 });

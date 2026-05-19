@@ -58,6 +58,7 @@ export class AutoresService {
       .from('autor')
       .update(updateDto)
       .eq('id_autor', id)
+      .select('*')
       .single();
 
     if (error) throw new BadRequestException(error.message);
