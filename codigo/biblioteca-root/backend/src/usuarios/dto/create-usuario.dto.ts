@@ -1,12 +1,33 @@
+import { IsString, IsNotEmpty, IsOptional, IsEmail, IsNumber } from 'class-validator';
+
 export class CreateUsuarioDto {
-  cedula?: string;
-  codigo_institucional: string;
-  primer_nombre: string;
+  @IsString() @IsNotEmpty()
+  cedula!: string;
+
+  @IsString() @IsNotEmpty()
+  codigo_institucional!: string;
+
+  @IsString() @IsNotEmpty()
+  primer_nombre!: string;
+
+  @IsString() @IsOptional()
   segundo_nombre?: string;
-  primer_apellido: string;
+
+  @IsString() @IsNotEmpty()
+  primer_apellido!: string;
+
+  @IsString() @IsOptional()
   segundo_apellido?: string;
-  correo: string;
+
+  @IsEmail() @IsNotEmpty()
+  correo!: string;
+
+  @IsString() @IsOptional()
   telefono?: string;
-  estado?: 'ACTIVO' | 'SUSPENDIDO' | 'INACTIVO' | 'BLOQUEADO';
-  id_rol: number;
+
+  @IsString() @IsOptional()
+  estado?: string;
+
+  @IsNumber() @IsNotEmpty()
+  id_rol!: number;
 }

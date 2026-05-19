@@ -50,7 +50,18 @@ export class LibrosService {
   async findAll() {
     const { data, error } = await this.supabase.client
       .from('libro')
-      .select('*');
+      .select(`
+      id_libro,
+      isbn,
+      titulo,
+      anio_publicacion,
+      descripcion,
+      id_categoria,
+      id_editorial,
+      categoria (    
+        nombre
+      )
+    `);
 
     if (error) throw new BadRequestException(error.message);
     return data || [];

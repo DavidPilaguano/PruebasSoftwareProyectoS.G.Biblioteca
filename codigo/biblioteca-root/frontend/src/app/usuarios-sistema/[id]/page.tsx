@@ -15,7 +15,6 @@ export default function EditarUsuarioSistemaPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [usuario, setUsuario] = useState<UsuarioSistema | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<UpdateUsuarioSistemaDto>({
     username: '',
@@ -48,7 +47,7 @@ export default function EditarUsuarioSistemaPage() {
       }
     };
 
-    loadData();
+    if (id) loadData();
   }, [id]);
 
   const handleChange = (
@@ -67,8 +66,15 @@ export default function EditarUsuarioSistemaPage() {
     setError(null);
 
     try {
-      await usuariosSistemaApi.update(id, formData);
+      // 🚨 SEPARACIÓN SANEADA DEL USERNAME:
+      // Extraemos 'username' del objeto para que no viaje en el body del PATCH.
+      // Así evitamos conflictos con el DTO estricto de NestJS.
+      const { username, ...payloadData } = formData;
+
+      await usuariosSistemaApi.update(id, payloadData);
+      
       router.push('/usuarios-sistema');
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error actualizando usuario del sistema');
     } finally {
@@ -127,6 +133,7 @@ export default function EditarUsuarioSistemaPage() {
                 name="primer_nombre"
                 value={formData.primer_nombre}
                 onChange={handleChange}
+                required
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -155,6 +162,7 @@ export default function EditarUsuarioSistemaPage() {
                 name="primer_apellido"
                 value={formData.primer_apellido}
                 onChange={handleChange}
+                required
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

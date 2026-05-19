@@ -109,7 +109,7 @@ export default function LibrosPage() {
                   <td className="px-6 py-3 text-sm text-slate-600">{libro.anio_publicacion}</td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     <span className="px-2 py-1 bg-slate-100 text-slate-800 rounded text-xs font-medium">
-                      {libro.categoria?.nombre || 'Sin categoría'}
+                      {libro.categoria?.nombre||'Sin categoría'}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-sm space-x-2">

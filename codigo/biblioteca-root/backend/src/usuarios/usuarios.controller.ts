@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { UpdateUsuarioDto } from './dto/update-usuario.dto'; // ✅ 1. IMPORTACIÓN CORREGIDA
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -25,7 +25,7 @@ export class UsuariosController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUsuarioDto: UpdateUsuarioDto,
+    @Body() updateUsuarioDto: UpdateUsuarioDto, // ✅ 2. DTO CORRECTO ASIGNADO AQUÍ
   ) {
     return this.usuariosService.update(id, updateUsuarioDto);
   }

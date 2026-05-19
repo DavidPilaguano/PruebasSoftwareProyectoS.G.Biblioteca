@@ -9,6 +9,7 @@ export class RolesController {
 
   @Post()
   create(@Body() createRolDto: CreateRolDto) {
+    console.log('¡SÍ! La petición llegó con éxito al RLES CONTROLLER:', createRolDto);
     return this.rolesService.create(createRolDto);
   }
 
@@ -26,7 +27,9 @@ export class RolesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRolDto: UpdateRolDto,
+    
   ) {
+    console.log('¡SÍ! La petición llegó con éxito al RLES CONTROLLER:', updateRolDto);
     return this.rolesService.update(id, updateRolDto);
   }
 

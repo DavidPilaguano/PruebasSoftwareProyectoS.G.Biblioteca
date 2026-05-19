@@ -78,7 +78,8 @@ export default function PrestamosPage() {
               {prestamos.map((prestamo) => (
                 <tr key={prestamo.id_prestamo} className="border-b hover:bg-slate-50">
                   <td className="px-6 py-3 text-sm text-slate-900">{prestamo.id_prestamo}</td>
-                  <td className="px-6 py-3 text-sm text-slate-600">{prestamo.usuario?.primer_nombre}</td>
+                  <td className="px-6 py-3 text-sm text-slate-600">{prestamo.usuario?.primer_nombre+
+                  " "+prestamo.usuario?.primer_apellido}</td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     {new Date(prestamo.fecha_prestamo).toLocaleDateString()}
                   </td>
