@@ -5,7 +5,7 @@ import { UpdateLibroDto } from './dto/update-libro.dto';
 
 @Injectable()
 export class LibrosService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private supabase: SupabaseService) { }
 
   async getDashboardStats() {
     try {
@@ -67,28 +67,37 @@ export class LibrosService {
     return data || [];
   }
 
-  async findOne(id: number) {
-    const { data, error } = await this.supabase.client
-      .from('libro')
-      .select('*')
-      .eq('id_libro', id)
-      .single();
+// src/libros/libros.service.ts
 
-    if (error) throw new NotFoundException('Libro no encontrado');
-    return data;
-  }
+async findOne(id: number) {
+  const { data, error } = await this.supabase.client
+    .from('libros')
+    .select('*')
+    .eq('id_libro', id)
+    .single();
 
-  async update(id: number, dto: UpdateLibroDto) {
-    const { data, error } = await this.supabase.client
-      .from('libro')
-      .update(dto)
-      .eq('id_libro', id)
-      .select('*')
-      .single();
+  if (error) throw new BadRequestException(error.message);
+  
+  // ¡Asegúrate de que esta línea exista aquí!
+  if (!data) throw new NotFoundException('Libro no encontrado');
+  
+  return data;
+}
 
-    if (error) throw new BadRequestException(error.message);
-    return data;
-  }
+async update(id: number, updateDto: any) {
+  const { data, error } = await this.supabase.client
+    .from('libros')
+    .update(updateDto)
+    .eq('id_libro', id)
+    .single();
+
+  if (error) throw new BadRequestException(error.message);
+  
+  // ¡Asegúrate de que esta línea exista aquí también!
+  if (!data) throw new NotFoundException('Libro no encontrado');
+  
+  return data;
+}
 
   async remove(id: number) {
     const { error } = await this.supabase.client

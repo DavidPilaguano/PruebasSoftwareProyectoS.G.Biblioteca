@@ -30,28 +30,34 @@ export class AutoresService {
     return data || [];
   }
 
-  async findOne(id: number) {
-    const { data, error } = await this.supabase.client
-      .from('autor')
-      .select('*')
-      .eq('id_autor', id)
-      .single();
+// Archivo: src/autores/autores.service.ts
 
-    if (error) throw new NotFoundException('Autor no encontrado');
-    return data;
-  }
+async findOne(id: number) {
+  const { data, error } = await this.supabase.client
+    .from('autor')
+    .select('*')
+    .eq('id_autor', id)
+    .single();
 
-  async update(id: number, dto: UpdateAutorDto) {
-    const { data, error } = await this.supabase.client
-      .from('autor')
-      .update(dto)
-      .eq('id_autor', id)
-      .select('*')
-      .single();
+  if (error) throw new BadRequestException(error.message);
+  
+  if (!data) throw new NotFoundException('Autor no encontrado');
+  
+  return data;
+}
 
-    if (error) throw new BadRequestException(error.message);
-    return data;
-  }
+async update(id: number, updateDto: any) {
+  const { data, error } = await this.supabase.client
+    .from('autor')
+    .update(updateDto)
+    .eq('id_autor', id)
+    .single();
+
+  if (error) throw new BadRequestException(error.message);
+  if (!data) throw new NotFoundException('Autor no encontrado');
+  
+  return data;
+}
 
   async remove(id: number) {
     const { data, error } = await this.supabase.client
