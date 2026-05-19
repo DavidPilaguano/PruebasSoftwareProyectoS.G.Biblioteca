@@ -38,6 +38,9 @@ export class CategoriasService {
       .single();
 
     if (error) throw new NotFoundException('Categoría no encontrada');
+    if (!data) {
+    throw new NotFoundException('Categoría no encontrada');
+    }
     return data;
   }
 
