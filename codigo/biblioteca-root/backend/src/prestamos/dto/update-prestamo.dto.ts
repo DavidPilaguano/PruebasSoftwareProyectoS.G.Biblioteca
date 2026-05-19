@@ -10,5 +10,6 @@ export class UpdatePrestamoDto extends PartialType(CreatePrestamoDto) {
   @IsDateString()
   @IsOptional()
   fecha_devolucion_real?: string; 
+  estado_prestamo?: string;
   // Al actualizar, este campo suele ser el más importante porque registra el día exacto que devuelven el libro
 }
