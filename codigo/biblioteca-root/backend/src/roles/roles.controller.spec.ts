@@ -53,7 +53,7 @@ describe('RolesController', () => {
         it('should return one role', async () => {
             const data = { id_rol: 1 };
             jest.spyOn(service, 'findOne').mockResolvedValueOnce(data as any);
-            const result = await controller.findOne('1');
+            const result = await controller.findOne(1);
             expect(result).toEqual(data);
             expect(service.findOne).toHaveBeenCalledWith(1);
         });
@@ -64,7 +64,7 @@ describe('RolesController', () => {
             const dto = { max_prestamos: 10 };
             const updated = { id_rol: 1, ...dto };
             jest.spyOn(service, 'update').mockResolvedValueOnce(updated as any);
-            const result = await controller.update('1', dto as any);
+            const result = await controller.update(1, dto as any);
             expect(result).toEqual(updated);
             expect(service.update).toHaveBeenCalledWith(1, dto);
         });
@@ -74,7 +74,7 @@ describe('RolesController', () => {
         it('should delete role', async () => {
             const deleted = { deleted: true };
             jest.spyOn(service, 'remove').mockResolvedValueOnce(deleted as any);
-            const result = await controller.remove('1');
+            const result = await controller.remove(1);
             expect(result).toEqual(deleted);
             expect(service.remove).toHaveBeenCalledWith(1);
         });

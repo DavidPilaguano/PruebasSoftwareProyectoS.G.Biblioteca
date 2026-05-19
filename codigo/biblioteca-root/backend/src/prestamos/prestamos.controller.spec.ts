@@ -53,7 +53,7 @@ describe('PrestamosController', () => {
         it('should return one prestamo', async () => {
             const data = { id_prestamo: 1 };
             jest.spyOn(service, 'findOne').mockResolvedValueOnce(data as any);
-            const result = await controller.findOne('1');
+            const result = await controller.findOne(1);
             expect(result).toEqual(data);
             expect(service.findOne).toHaveBeenCalledWith(1);
         });
@@ -64,7 +64,7 @@ describe('PrestamosController', () => {
             const dto = { estado: 'DEVUELTO' };
             const updated = { id_prestamo: 1, ...dto };
             jest.spyOn(service, 'update').mockResolvedValueOnce(updated as any);
-            const result = await controller.update('1', dto as any);
+            const result = await controller.update(1, dto as any);
             expect(result).toEqual(updated);
             expect(service.update).toHaveBeenCalledWith(1, dto);
         });
@@ -74,7 +74,7 @@ describe('PrestamosController', () => {
         it('should delete prestamo', async () => {
             const deleted = { id_prestamo: 1 };
             jest.spyOn(service, 'remove').mockResolvedValueOnce(deleted as any);
-            const result = await controller.remove('1');
+            const result = await controller.remove(1);
             expect(result).toEqual(deleted);
             expect(service.remove).toHaveBeenCalledWith(1);
         });

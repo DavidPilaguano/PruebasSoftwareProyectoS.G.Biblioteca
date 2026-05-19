@@ -54,7 +54,7 @@ describe('LibrosController', () => {
         it('should return one libro', async () => {
             const data = { id_libro: 1 };
             jest.spyOn(service, 'findOne').mockResolvedValueOnce(data as any);
-            const result = await controller.findOne('1');
+            const result = await controller.findOne(1);
             expect(result).toEqual(data);
             expect(service.findOne).toHaveBeenCalledWith(1);
         });
@@ -75,7 +75,7 @@ describe('LibrosController', () => {
             const dto = { titulo: 'Updated Title' };
             const updated = { id_libro: 1, ...dto };
             jest.spyOn(service, 'update').mockResolvedValueOnce(updated as any);
-            const result = await controller.update('1', dto as any);
+            const result = await controller.update(1, dto as any);
             expect(result).toEqual(updated);
             expect(service.update).toHaveBeenCalledWith(1, dto);
         });
@@ -85,7 +85,7 @@ describe('LibrosController', () => {
         it('should delete libro', async () => {
             const deleted = { deleted: true };
             jest.spyOn(service, 'remove').mockResolvedValueOnce(deleted as any);
-            const result = await controller.remove('1');
+            const result = await controller.remove(1);
             expect(result).toEqual(deleted);
             expect(service.remove).toHaveBeenCalledWith(1);
         });

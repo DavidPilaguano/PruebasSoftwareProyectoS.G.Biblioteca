@@ -39,9 +39,11 @@ async findOne(id: number) {
     .eq('id_autor', id)
     .single();
 
-  if (error) throw new BadRequestException(error.message);
   
   if (!data) throw new NotFoundException('Autor no encontrado');
+  if (error) {
+    throw new BadRequestException(error.message);
+  }
   
   return data;
 }

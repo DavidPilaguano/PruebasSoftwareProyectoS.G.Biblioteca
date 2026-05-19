@@ -53,7 +53,7 @@ describe('EjemplaresController', () => {
         it('should return one ejemplar', async () => {
             const data = { id_ejemplar: 1 };
             jest.spyOn(service, 'findOne').mockResolvedValueOnce(data as any);
-            const result = await controller.findOne('1');
+            const result = await controller.findOne(1);
             expect(result).toEqual(data);
             expect(service.findOne).toHaveBeenCalledWith(1);
         });
@@ -64,7 +64,7 @@ describe('EjemplaresController', () => {
             const dto = { estado: 'DISPONIBLE' };
             const updated = { id_ejemplar: 1, ...dto };
             jest.spyOn(service, 'update').mockResolvedValueOnce(updated as any);
-            const result = await controller.update('1', dto as any);
+            const result = await controller.update(1, dto as any);
             expect(result).toEqual(updated);
             expect(service.update).toHaveBeenCalledWith(1, dto);
         });
@@ -74,7 +74,7 @@ describe('EjemplaresController', () => {
         it('should delete ejemplar', async () => {
             const deleted = { deleted: true };
             jest.spyOn(service, 'remove').mockResolvedValueOnce(deleted as any);
-            const result = await controller.remove('1');
+            const result = await controller.remove(1);
             expect(result).toEqual(deleted);
             expect(service.remove).toHaveBeenCalledWith(1);
         });
