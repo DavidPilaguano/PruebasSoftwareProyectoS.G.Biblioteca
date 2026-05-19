@@ -25,8 +25,8 @@ export default function LoginPage() {
     };
 
     return (
-    <div className="fixed inset-0 min-h-screen flex items-center justify-center bg-slate-100 p-4 z-[9999]">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md border border-slate-200">
+    <div className="w-full max-w-md p-4">
+        <div className="bg-white p-8 rounded-lg shadow-md w-full border border-slate-200">
         <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">Biblioteca ESPE</h1>
         <p className="text-slate-600 text-center text-sm mb-6">Inicia sesión con tu cuenta de sistema</p>
 

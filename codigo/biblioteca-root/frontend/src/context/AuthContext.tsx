@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface User {
   id: number;
@@ -23,15 +23,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     // Al cargar la app, verificamos si hay sesión guardada en el navegador
     const storedUser = localStorage.getItem('library_user');
-    if (storedUser) {
+    const token = localStorage.getItem('library_token');
+    
+    if (storedUser && token) {
       setUser(JSON.parse(storedUser));
+      // Si está autenticado y trata de entrar al login, lo mandamos al dashboard
+      if (pathname === '/login') {
+        router.push('/');
+      }
+    } else {
+      setUser(null);
+      // Si NO está autenticado y no está en la página de login, lo redirigimos al login
+      if (pathname !== '/login') {
+        router.push('/login');
+      }
     }
     setLoading(false);
-  }, []);
+  }, [pathname, router]);
 
   const login = async (username: string, password_hash: string) => {
     const { authApi } = await import('@/lib/api');
