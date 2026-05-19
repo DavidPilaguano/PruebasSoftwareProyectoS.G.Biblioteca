@@ -54,7 +54,7 @@ export class PrestamosService {
       .eq('id_prestamo', id)
       .single();
 
-    if (error) throw new NotFoundException(error.message);
+    if (error || !data) throw new NotFoundException(error?.message || 'Préstamo no encontrado');
     return data;
   }
 

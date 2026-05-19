@@ -1,11 +1,11 @@
 import { describe, beforeEach, it, expect, jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CategoriasService } from './categorias.service';
+import { AuditoriaService } from './auditoria.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
-describe('CategoriasService', () => {
-    let service: CategoriasService;
+describe('AuditoriaService', () => {
+    let service: AuditoriaService;
     let mockSupabaseClient: any;
 
     beforeEach(async () => {
@@ -21,53 +21,59 @@ describe('CategoriasService', () => {
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                CategoriasService,
+                AuditoriaService,
                 { provide: SupabaseService, useValue: { client: mockSupabaseClient } },
             ],
         }).compile();
 
-        service = module.get<CategoriasService>(CategoriasService);
-    });
-
-    it('should be defined', () => {
-        expect(service).toBeDefined();
+        service = module.get<AuditoriaService>(AuditoriaService);
     });
 
     describe('create', () => {
-        it('should create a category', async () => {
-            const dto = { nombre: 'Ficción' };
-            mockSupabaseClient.single.mockResolvedValueOnce({ data: { id_categoria: 1, ...dto }, error: null });
+        it('should create audit record', async () => {
+            const dto = { tabla_afectada: 'usuario', id_registro: 1, accion: 'INSERT' };
+            mockSupabaseClient.single.mockResolvedValueOnce({ data: { id_auditoria: 1, ...dto }, error: null });
             const result = await service.create(dto as any);
-            expect(result.id_categoria).toBe(1);
+            expect(result.id_auditoria).toBe(1);
         });
 
-        it('should throw BadRequestException on error', async () => {
+        it('should throw BadRequestException on missing fields', async () => {
+            await expect(service.create({ tabla_afectada: 'usuario' } as any)).rejects.toThrow(BadRequestException);
+        });
+
+        it('should throw BadRequestException on db error', async () => {
             mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: { message: 'DB Error' } });
-            await expect(service.create({ nombre: 'Test' } as any)).rejects.toThrow(BadRequestException);
+            await expect(service.create({ tabla_afectada: 'usuario', id_registro: 1, accion: 'UPDATE' } as any)).rejects.toThrow(BadRequestException);
         });
     });
 
     describe('findAll', () => {
-        it('should return all categories', async () => {
-            mockSupabaseClient.select.mockResolvedValueOnce({ data: [{ id_categoria: 1 }], error: null });
+        it('should return all audit records', async () => {
+            mockSupabaseClient.select.mockResolvedValueOnce({ data: [{ id_auditoria: 1 }], error: null });
             const result = await service.findAll();
             expect(result.length).toBe(1);
+        });
+
+        it('should return empty array on null', async () => {
+            mockSupabaseClient.select.mockResolvedValueOnce({ data: null, error: null });
+            const result = await service.findAll();
+            expect(result).toEqual([]);
         });
 
         it('should throw BadRequestException on error', async () => {
             mockSupabaseClient.select.mockResolvedValueOnce({ data: null, error: { message: 'DB Error' } });
             await expect(service.findAll()).rejects.toThrow(BadRequestException);
         });
-
-        it('should return empty array when data is null', async () => {
-            mockSupabaseClient.select.mockResolvedValueOnce({ data: null, error: null });
-            const result = await service.findAll();
-            expect(result).toEqual([]);
-        });
     });
 
     describe('findOne', () => {
-        it('should throw NotFoundException if category does not exist', async () => {
+        it('should return audit record if found', async () => {
+            mockSupabaseClient.single.mockResolvedValueOnce({ data: { id_auditoria: 1 }, error: null });
+            const result = await service.findOne(1);
+            expect(result.id_auditoria).toBe(1);
+        });
+
+        it('should throw NotFoundException if not found', async () => {
             mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: null });
             await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
         });
@@ -76,37 +82,30 @@ describe('CategoriasService', () => {
             mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: { message: 'Not found' } });
             await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
         });
-
-        it('should return category if found', async () => {
-            mockSupabaseClient.single.mockResolvedValueOnce({ data: { id_categoria: 1, nombre: 'Ficción' }, error: null });
-            const result = await service.findOne(1);
-            expect(result.id_categoria).toBe(1);
-        });
     });
 
     describe('update', () => {
-        it('should update a category', async () => {
-            const updated = { id_categoria: 1, nombre: 'No Ficción' };
-            mockSupabaseClient.single.mockResolvedValueOnce({ data: updated, error: null });
-            const result = await service.update(1, { nombre: 'No Ficción' });
-            expect(result.nombre).toBe('No Ficción');
+        it('should update audit record', async () => {
+            mockSupabaseClient.single.mockResolvedValueOnce({ data: { id_auditoria: 1, accion: 'DELETE' }, error: null });
+            const result = await service.update(1, { accion: 'DELETE' });
+            expect(result.accion).toBe('DELETE');
         });
 
         it('should throw BadRequestException on error', async () => {
             mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: { message: 'Update failed' } });
-            await expect(service.update(1, { nombre: 'Test' })).rejects.toThrow(BadRequestException);
+            await expect(service.update(1, { accion: 'DELETE' })).rejects.toThrow(BadRequestException);
         });
     });
 
     describe('remove', () => {
-        it('should delete a category', async () => {
+        it('should delete audit record', async () => {
             mockSupabaseClient.delete.mockReturnThis();
-            mockSupabaseClient.eq.mockResolvedValueOnce({ data: {}, error: null });
+            mockSupabaseClient.eq.mockResolvedValueOnce({ data: null, error: null });
             const result = await service.remove(1);
             expect(result.deleted).toBe(true);
         });
 
-        it('should throw BadRequestException on delete error', async () => {
+        it('should throw BadRequestException on error', async () => {
             mockSupabaseClient.delete.mockReturnThis();
             mockSupabaseClient.eq.mockResolvedValueOnce({ data: null, error: { message: 'Delete failed' } });
             await expect(service.remove(1)).rejects.toThrow(BadRequestException);

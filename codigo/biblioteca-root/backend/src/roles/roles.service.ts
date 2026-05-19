@@ -38,6 +38,9 @@ export class RolesService {
       .single();
 
     if (error) throw new NotFoundException('Rol no encontrado');
+    if (!data) {
+  throw new NotFoundException('Rol no encontrado');
+  }
     return data;
   }
 

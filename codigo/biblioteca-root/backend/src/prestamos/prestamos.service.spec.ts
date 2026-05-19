@@ -31,7 +31,7 @@ describe('PrestamosService', () => {
 
     describe('create', () => {
         it('should issue a loan correctly', async () => {
-            const dto = { id_usuario: 1, id_ejemplar: 10, fecha_prestamo: '2026-05-19', estado_prestamo: 'ACTIVO' };
+            const dto = { id_usuario: 1, id_ejemplar: 10, fecha_devolucion_esperada: '2026-06-19', estado: 'ACTIVO', id_usuario_sistema: 1 };
             mockSupabaseClient.single.mockResolvedValue({ data: { id_prestamo: 1, ...dto }, error: null });
             const result = await service.create(dto as any);
             expect(result.id_prestamo).toBe(1);
@@ -43,11 +43,62 @@ describe('PrestamosService', () => {
         });
     });
 
+    describe('findAll', () => {
+        it('should return all loans', async () => {
+            const loans = [{ id_prestamo: 1 }];
+            mockSupabaseClient.select.mockResolvedValueOnce({ data: loans, error: null });
+            const result = await service.findAll();
+            expect(result).toEqual(loans);
+        });
+
+        it('should throw BadRequestException on error', async () => {
+            mockSupabaseClient.select.mockResolvedValueOnce({ data: null, error: { message: 'DB Error' } });
+            await expect(service.findAll()).rejects.toThrow(BadRequestException);
+        });
+    });
+
+    describe('findOne', () => {
+        it('should return a loan if found', async () => {
+            mockSupabaseClient.single.mockResolvedValue({ data: { id_prestamo: 1, estado: 'ACTIVO' }, error: null });
+            const result = await service.findOne(1);
+            expect(result.id_prestamo).toBe(1);
+        });
+
+        it('should throw NotFoundException if not found', async () => {
+            mockSupabaseClient.single.mockResolvedValue({ data: null, error: null });
+            await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
+        });
+    });
+
     describe('update', () => {
         it('should modify loan states (e.g., DEVUELTO)', async () => {
-            mockSupabaseClient.single.mockResolvedValue({ data: { id_prestamo: 1, estado_prestamo: 'DEVUELTO' }, error: null });
-            const result = await service.update(1, { estado_prestamo: 'DEVUELTO' });
-            expect(result.estado_prestamo).toBe('DEVUELTO');
+            mockSupabaseClient.single.mockResolvedValue({ data: { id_prestamo: 1, estado: 'DEVUELTO' }, error: null });
+            const result = await service.update(1, { estado: 'DEVUELTO' });
+            expect(result.estado).toBe('DEVUELTO');
+        });
+
+        it('should throw BadRequestException on error', async () => {
+            mockSupabaseClient.single.mockResolvedValue({ data: null, error: { message: 'Update failed' } });
+            await expect(service.update(1, { estado: 'DEVUELTO' })).rejects.toThrow(BadRequestException);
+        });
+    });
+
+    describe('remove', () => {
+        it('should delete a loan', async () => {
+            mockSupabaseClient.delete.mockReturnThis();
+            mockSupabaseClient.eq.mockReturnThis();
+            mockSupabaseClient.select.mockReturnThis();
+            mockSupabaseClient.single.mockResolvedValueOnce({ data: { id_prestamo: 1 }, error: null });
+            const result = await service.remove(1);
+            expect(result.id_prestamo).toBe(1);
+        });
+
+        it('should throw BadRequestException on delete error', async () => {
+            mockSupabaseClient.delete.mockReturnThis();
+            mockSupabaseClient.eq.mockReturnThis();
+            mockSupabaseClient.select.mockReturnThis();
+            mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: { message: 'Delete failed' } });
+            await expect(service.remove(1)).rejects.toThrow(BadRequestException);
         });
     });
 });

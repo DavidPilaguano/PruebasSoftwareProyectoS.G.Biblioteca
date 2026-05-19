@@ -37,7 +37,7 @@ export class UsuariosService {
       .eq('id_usuario', id)
       .single();
 
-    if (error) throw new NotFoundException('Usuario no encontrado');
+    if (error || !data) throw new NotFoundException('Usuario no encontrado');
     return data;
   }
 

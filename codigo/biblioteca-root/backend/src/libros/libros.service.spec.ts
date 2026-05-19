@@ -37,9 +37,17 @@ describe('LibrosService', () => {
             expect(result.id_libro).toBe(1);
         });
 
+        it('should throw BadRequestException when missing id_categoria', async () => {
+            await expect(service.create({ titulo: 'Fail', id_editorial: 1 } as any)).rejects.toThrow(BadRequestException);
+        });
+
+        it('should throw BadRequestException when missing id_editorial', async () => {
+            await expect(service.create({ titulo: 'Fail', id_categoria: 1 } as any)).rejects.toThrow(BadRequestException);
+        });
+
         it('should throw BadRequestException on database failure', async () => {
             mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: { message: 'DB Error' } });
-            await expect(service.create({ titulo: 'Fail' } as any)).rejects.toThrow(BadRequestException);
+            await expect(service.create({ titulo: 'Fail', id_editorial: 1, id_categoria: 1 } as any)).rejects.toThrow(BadRequestException);
         });
     });
 
@@ -48,6 +56,12 @@ describe('LibrosService', () => {
             mockSupabaseClient.select.mockResolvedValueOnce({ data: [{ id_libro: 1 }], error: null });
             const result = await service.findAll();
             expect(result.length).toBe(1);
+        });
+
+        it('should return empty array when data is null', async () => {
+            mockSupabaseClient.select.mockResolvedValueOnce({ data: null, error: null });
+            const result = await service.findAll();
+            expect(result).toEqual([]);
         });
 
         it('should throw BadRequestException if findAll fails', async () => {
@@ -66,6 +80,11 @@ describe('LibrosService', () => {
         it('should throw NotFoundException if book missing', async () => {
             mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: null });
             await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
+        });
+
+        it('should throw BadRequestException on error', async () => {
+            mockSupabaseClient.single.mockResolvedValueOnce({ data: null, error: { message: 'Not found' } });
+            await expect(service.findOne(99)).rejects.toThrow(BadRequestException);
         });
     });
 
@@ -97,6 +116,53 @@ describe('LibrosService', () => {
         it('should throw BadRequestException if delete fails', async () => {
             mockSupabaseClient.eq.mockResolvedValueOnce({ data: null, error: { message: 'Delete Error' } });
             await expect(service.remove(1)).rejects.toThrow(BadRequestException);
+        });
+    });
+
+    describe('getDashboardStats', () => {
+        it('should return dashboard statistics', async () => {
+            mockSupabaseClient.from = jest.fn().mockReturnThis();
+            mockSupabaseClient.select = jest.fn().mockResolvedValueOnce({ 
+                data: null, 
+                count: 5, 
+                error: null 
+            }).mockResolvedValueOnce({ 
+                data: null, 
+                count: 10, 
+                error: null 
+            }).mockResolvedValueOnce({ 
+                data: null, 
+                count: 15, 
+                error: null 
+            });
+            const result = await service.getDashboardStats();
+            expect(result).toEqual({ libros: 5, usuarios: 10, ejemplares: 15 });
+        });
+
+        it('should return zeros when no data', async () => {
+            mockSupabaseClient.from = jest.fn().mockReturnThis();
+            mockSupabaseClient.select = jest.fn().mockResolvedValueOnce({ 
+                data: null, 
+                count: null, 
+                error: null 
+            }).mockResolvedValueOnce({ 
+                data: null, 
+                count: null, 
+                error: null 
+            }).mockResolvedValueOnce({ 
+                data: null, 
+                count: null, 
+                error: null 
+            });
+            const result = await service.getDashboardStats();
+            expect(result).toEqual({ libros: 0, usuarios: 0, ejemplares: 0 });
+        });
+
+        it('should catch errors gracefully', async () => {
+            mockSupabaseClient.from = jest.fn().mockReturnThis();
+            mockSupabaseClient.select = jest.fn().mockRejectedValueOnce(new Error('DB Error'));
+            const result = await service.getDashboardStats();
+            expect(result).toBeUndefined();
         });
     });
 });

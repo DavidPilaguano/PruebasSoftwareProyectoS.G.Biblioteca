@@ -37,7 +37,7 @@ export class AuditoriaService {
       .eq('id_auditoria', id)
       .single();
 
-    if (error) throw new NotFoundException('Registro de auditoria no encontrado');
+    if (error || !data) throw new NotFoundException('Registro de auditoria no encontrado');
     return data;
   }
 

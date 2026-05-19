@@ -19,7 +19,7 @@ export class AutoresController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.autoresService.findOne(id);
+    return this.autoresService.findOne(+id);
   }
 
   @Patch(':id')
@@ -27,11 +27,11 @@ export class AutoresController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAutorDto: UpdateAutorDto,
   ) {
-    return this.autoresService.update(id, updateAutorDto);
+    return this.autoresService.update(+id, updateAutorDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.autoresService.remove(id);
+    return this.autoresService.remove(+id);
   }
 }
