@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { AutoresService } from '../../src/autores/autores.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -35,13 +36,15 @@ describe('AutoresService', () => {
   });
 
   it('should throw when primer_nombre or primer_apellido faltan', async () => {
-    await expect(service.create({ primer_nombre: '', primer_apellido: '' } as any)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.create({ primer_nombre: '', primer_apellido: '' } as any),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('should return lista completa de autores', async () => {
-    const expected = [{ id_autor: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' }];
+    const expected = [
+      { id_autor: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' },
+    ];
 
     query.result = { data: expected, error: null };
 
@@ -50,7 +53,11 @@ describe('AutoresService', () => {
   });
 
   it('should return autor por ID', async () => {
-    const expected = { id_autor: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' };
+    const expected = {
+      id_autor: 1,
+      primer_nombre: 'Ana',
+      primer_apellido: 'Lopez',
+    };
 
     query.result = { data: expected, error: null };
 

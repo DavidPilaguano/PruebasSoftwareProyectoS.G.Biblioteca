@@ -1,5 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
@@ -33,20 +35,22 @@ describe('Autores (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/autores')
       .send(createDto);
-    
-    // Depending on validation, this might fail initially. 
+
+    // Depending on validation, this might fail initially.
     // If it fails with 400, make sure to provide valid data.
     if (response.status === 201) {
       // Adjust according to the actual primary key name returned
-      createdId = response.body.id || response.body.id_autor || response.body.id_usuario || response.body.id_rol;
+      createdId =
+        response.body.id ||
+        response.body.id_autor ||
+        response.body.id_usuario ||
+        response.body.id_rol;
       expect(createdId).toBeDefined();
     }
   });
 
   it('/autores (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/autores')
-      .expect(200);
+    return request(app.getHttpServer()).get('/autores').expect(200);
   });
 
   it('/autores/:id (GET)', async () => {
@@ -54,9 +58,7 @@ describe('Autores (e2e)', () => {
       console.warn('Skipping GET by ID because creation failed');
       return;
     }
-    await request(app.getHttpServer())
-      .get(`/autores/${createdId}`)
-      .expect(200);
+    await request(app.getHttpServer()).get(`/autores/${createdId}`).expect(200);
   });
 
   it('/autores/:id (PATCH)', async () => {
@@ -80,7 +82,7 @@ describe('Autores (e2e)', () => {
     await request(app.getHttpServer())
       .delete(`/autores/${createdId}`)
       .expect(200);
-    
+
     createdId = null; // Successfully deleted
   });
 });

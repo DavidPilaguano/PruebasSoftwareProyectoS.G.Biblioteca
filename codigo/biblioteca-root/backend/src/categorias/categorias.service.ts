@@ -1,11 +1,15 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 
 @Injectable()
 export class CategoriasService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async create(dto: CreateCategoriaDto) {
     if (!dto.nombre) {
@@ -39,7 +43,7 @@ export class CategoriasService {
 
     if (error) throw new NotFoundException('Categoría no encontrada');
     if (!data) {
-    throw new NotFoundException('Categoría no encontrada');
+      throw new NotFoundException('Categoría no encontrada');
     }
     return data;
   }

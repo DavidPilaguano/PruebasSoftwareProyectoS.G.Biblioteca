@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { CategoriasController } from '../../src/categorias/categorias.controller';
 import { CategoriasService } from '../../src/categorias/categorias.service';
 
@@ -12,7 +13,6 @@ describe('CategoriasController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-    
   };
 
   beforeEach(async () => {
@@ -36,7 +36,9 @@ describe('CategoriasController', () => {
 
   describe('create', () => {
     it('should create a new record', async () => {
-      const dto = { /* mock data */ } as any;
+      const dto = {
+        /* mock data */
+      } as any;
       const result = { id: 1, ...dto };
       jest.spyOn(service, 'create').mockResolvedValue(result);
 
@@ -67,9 +69,11 @@ describe('CategoriasController', () => {
 
   describe('update', () => {
     it('should update a record', async () => {
-      const dto = { /* mock data */ } as any;
+      const dto = {
+        /* mock data */
+      } as any;
       const result = { id: 1, ...dto };
-      jest.spyOn(service, 'update').mockResolvedValue(result as any);
+      jest.spyOn(service, 'update').mockResolvedValue(result);
 
       expect(await controller.update(1, dto)).toBe(result);
       expect(service.update).toHaveBeenCalledWith(1, dto);
@@ -79,11 +83,10 @@ describe('CategoriasController', () => {
   describe('remove', () => {
     it('should remove a record', async () => {
       const result = { deleted: true };
-      jest.spyOn(service, 'remove').mockResolvedValue(result as any);
+      jest.spyOn(service, 'remove').mockResolvedValue(result);
 
       expect(await controller.remove(1)).toBe(result);
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });
-
 });

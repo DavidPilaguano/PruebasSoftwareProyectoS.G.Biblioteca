@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { LibrosService } from './libros.service';
 import { CreateLibroDto } from './dto/create-libro.dto';
 import { UpdateLibroDto } from './dto/update-libro.dto';
@@ -12,9 +21,9 @@ export class LibrosController {
   constructor(private readonly librosService: LibrosService) {}
   */
   @Get('dashboard/stats')
-  getDashboardStats(){
-    return this.librosService.getDashboardStats()
-  }  
+  getDashboardStats() {
+    return this.librosService.getDashboardStats();
+  }
   @Post()
   create(@Body() createLibroDto: CreateLibroDto) {
     return this.librosService.create(createLibroDto);

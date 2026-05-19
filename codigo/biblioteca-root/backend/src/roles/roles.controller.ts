@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRolDto } from './dto/create-rol.dto';
 import { UpdateRolDto } from './dto/update-rol.dto';
@@ -9,7 +18,10 @@ export class RolesController {
 
   @Post()
   create(@Body() createRolDto: CreateRolDto) {
-    console.log('¡SÍ! La petición llegó con éxito al RLES CONTROLLER:', createRolDto);
+    console.log(
+      '¡SÍ! La petición llegó con éxito al RLES CONTROLLER:',
+      createRolDto,
+    );
     return this.rolesService.create(createRolDto);
   }
 
@@ -27,9 +39,11 @@ export class RolesController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRolDto: UpdateRolDto,
-    
   ) {
-    console.log('¡SÍ! La petición llegó con éxito al RLES CONTROLLER:', updateRolDto);
+    console.log(
+      '¡SÍ! La petición llegó con éxito al RLES CONTROLLER:',
+      updateRolDto,
+    );
     return this.rolesService.update(id, updateRolDto);
   }
 

@@ -1,33 +1,49 @@
-import { IsString, IsNotEmpty, IsOptional, IsEmail, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEmail,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateUsuarioDto {
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   cedula!: string;
 
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   codigo_institucional!: string;
 
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   primer_nombre!: string;
 
-  @IsString() @IsOptional()
+  @IsString()
+  @IsOptional()
   segundo_nombre?: string;
 
-  @IsString() @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty()
   primer_apellido!: string;
 
-  @IsString() @IsOptional()
+  @IsString()
+  @IsOptional()
   segundo_apellido?: string;
 
-  @IsEmail() @IsNotEmpty()
+  @IsEmail()
+  @IsNotEmpty()
   correo!: string;
 
-  @IsString() @IsOptional()
+  @IsString()
+  @IsOptional()
   telefono?: string;
 
-  @IsString() @IsOptional()
+  @IsString()
+  @IsOptional()
   estado?: string;
 
-  @IsNumber() @IsNotEmpty()
+  @IsNumber()
+  @IsNotEmpty()
   id_rol!: number;
 }

@@ -1,11 +1,16 @@
-import { Injectable, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateLibroDto } from './dto/create-libro.dto';
 import { UpdateLibroDto } from './dto/update-libro.dto';
 
 @Injectable()
 export class LibrosService {
-  constructor(private supabase: SupabaseService) { }
+  constructor(private readonly supabase: SupabaseService) {}
 
   async getDashboardStats() {
     try {
@@ -29,13 +34,15 @@ export class LibrosService {
         ejemplares: ejemplaresRes.count || 0,
       };
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   async create(dto: CreateLibroDto) {
     if (!dto.id_categoria || !dto.id_editorial) {
-      throw new BadRequestException('id_categoria e id_editorial son requeridos');
+      throw new BadRequestException(
+        'id_categoria e id_editorial son requeridos',
+      );
     }
     const { data, error } = await this.supabase.client
       .from('libro')
@@ -48,9 +55,7 @@ export class LibrosService {
   }
 
   async findAll() {
-    const { data, error } = await this.supabase.client
-      .from('libro')
-      .select(`
+    const { data, error } = await this.supabase.client.from('libro').select(`
       id_libro,
       isbn,
       titulo,
@@ -67,37 +72,37 @@ export class LibrosService {
     return data || [];
   }
 
-// src/libros/libros.service.ts
+  // src/libros/libros.service.ts
 
-async findOne(id: number) {
-  const { data, error } = await this.supabase.client
-    .from('libros')
-    .select('*')
-    .eq('id_libro', id)
-    .single();
+  async findOne(id: number) {
+    const { data, error } = await this.supabase.client
+      .from('libros')
+      .select('*')
+      .eq('id_libro', id)
+      .single();
 
-  if (error) throw new BadRequestException(error.message);
-  
-  // ¡Asegúrate de que esta línea exista aquí!
-  if (!data) throw new NotFoundException('Libro no encontrado');
-  
-  return data;
-}
+    if (error) throw new BadRequestException(error.message);
 
-async update(id: number, updateDto: any) {
-  const { data, error } = await this.supabase.client
-    .from('libros')
-    .update(updateDto)
-    .eq('id_libro', id)
-    .single();
+    // ¡Asegúrate de que esta línea exista aquí!
+    if (!data) throw new NotFoundException('Libro no encontrado');
 
-  if (error) throw new BadRequestException(error.message);
-  
-  // ¡Asegúrate de que esta línea exista aquí también!
-  if (!data) throw new NotFoundException('Libro no encontrado');
-  
-  return data;
-}
+    return data;
+  }
+
+  async update(id: number, updateDto: any) {
+    const { data, error } = await this.supabase.client
+      .from('libros')
+      .update(updateDto)
+      .eq('id_libro', id)
+      .single();
+
+    if (error) throw new BadRequestException(error.message);
+
+    // ¡Asegúrate de que esta línea exista aquí también!
+    if (!data) throw new NotFoundException('Libro no encontrado');
+
+    return data;
+  }
 
   async remove(id: number) {
     const { error } = await this.supabase.client

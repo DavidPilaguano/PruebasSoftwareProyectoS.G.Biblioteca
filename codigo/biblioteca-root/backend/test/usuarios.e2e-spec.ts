@@ -1,5 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
@@ -28,25 +30,33 @@ describe('Usuarios (e2e)', () => {
   });
 
   it('/usuarios (POST)', async () => {
-    const createDto = { codigo_institucional: 'TEST001', primer_nombre: 'Test', primer_apellido: 'User', correo: 'test@example.com', id_rol: 1 };
+    const createDto = {
+      codigo_institucional: 'TEST001',
+      primer_nombre: 'Test',
+      primer_apellido: 'User',
+      correo: 'test@example.com',
+      id_rol: 1,
+    };
 
     const response = await request(app.getHttpServer())
       .post('/usuarios')
       .send(createDto);
-    
-    // Depending on validation, this might fail initially. 
+
+    // Depending on validation, this might fail initially.
     // If it fails with 400, make sure to provide valid data.
     if (response.status === 201) {
       // Adjust according to the actual primary key name returned
-      createdId = response.body.id || response.body.id_usuario || response.body.id_usuario || response.body.id_rol;
+      createdId =
+        response.body.id ||
+        response.body.id_usuario ||
+        response.body.id_usuario ||
+        response.body.id_rol;
       expect(createdId).toBeDefined();
     }
   });
 
   it('/usuarios (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/usuarios')
-      .expect(200);
+    return request(app.getHttpServer()).get('/usuarios').expect(200);
   });
 
   it('/usuarios/:id (GET)', async () => {
@@ -64,7 +74,13 @@ describe('Usuarios (e2e)', () => {
       console.warn('Skipping PATCH because creation failed');
       return;
     }
-    const updateDto = { codigo_institucional: 'TEST001', primer_nombre: 'Test', primer_apellido: 'User', correo: 'test@example.com', id_rol: 1 };
+    const updateDto = {
+      codigo_institucional: 'TEST001',
+      primer_nombre: 'Test',
+      primer_apellido: 'User',
+      correo: 'test@example.com',
+      id_rol: 1,
+    };
 
     await request(app.getHttpServer())
       .patch(`/usuarios/${createdId}`)
@@ -80,7 +96,7 @@ describe('Usuarios (e2e)', () => {
     await request(app.getHttpServer())
       .delete(`/usuarios/${createdId}`)
       .expect(200);
-    
+
     createdId = null; // Successfully deleted
   });
 });

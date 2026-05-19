@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { EditorialesService } from '../../src/editoriales/editoriales.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';

@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateUsuarioSistemaDto } from './dto/create-usuario-sistema.dto';
 import { UpdateUsuarioSistemaDto } from './dto/update-usuario-sistema.dto';
@@ -6,7 +10,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class UsuariosSistemaService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   /**
    * Genera un hash SHA-256 para proteger la contraseña
@@ -19,18 +23,25 @@ export class UsuariosSistemaService {
    * Crea un nuevo usuario administrativo en el sistema
    */
   async create(dto: CreateUsuarioSistemaDto) {
-    if (!dto.rol_sistema || !['ADMINISTRADOR', 'BIBLIOTECARIO'].includes(dto.rol_sistema)) {
-      throw new BadRequestException('rol_sistema debe ser ADMINISTRADOR o BIBLIOTECARIO');
+    if (
+      !dto.rol_sistema ||
+      !['ADMINISTRADOR', 'BIBLIOTECARIO'].includes(dto.rol_sistema)
+    ) {
+      throw new BadRequestException(
+        'rol_sistema debe ser ADMINISTRADOR o BIBLIOTECARIO',
+      );
     }
-    
+
     // Si por error el frontend manda 'password_hash' en lugar de 'password', lo manejamos
     const passwordRaw = dto.password || (dto as any).password_hash;
     if (!passwordRaw) {
-      throw new BadRequestException('La contraseña es obligatoria para la creación');
+      throw new BadRequestException(
+        'La contraseña es obligatoria para la creación',
+      );
     }
 
     const { password, ...dtoWithoutPassword } = dto;
-    
+
     // Eliminamos cualquier rastro de password_hash que venga del body para meter el real
     delete (dtoWithoutPassword as any).password_hash;
 
@@ -39,7 +50,7 @@ export class UsuariosSistemaService {
       password_hash: this.hashPassword(passwordRaw),
       estado: dto.estado || 'ACTIVO',
     };
-    
+
     const { data, error } = await this.supabase.client
       .from('usuario_sistema')
       .insert([dataToInsert])
@@ -59,7 +70,7 @@ export class UsuariosSistemaService {
       .select('*');
 
     if (error) throw new BadRequestException(error.message);
-    return (data || []).map(u => ({ ...u, password_hash: undefined }));
+    return (data || []).map((u) => ({ ...u, password_hash: undefined }));
   }
 
   /**
@@ -123,7 +134,7 @@ export class UsuariosSistemaService {
       throw new BadRequestException({
         statusCode: 400,
         message: 'ERROR REAL DE SUPABASE',
-        error_db: error.message
+        error_db: error.message,
       });
     }
 

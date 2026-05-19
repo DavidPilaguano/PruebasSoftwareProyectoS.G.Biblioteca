@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsuariosService } from '../../src/usuarios/usuarios.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -35,11 +36,15 @@ describe('UsuariosService', () => {
   });
 
   it('should throw when id_rol is missing', async () => {
-    await expect(service.create({} as any)).rejects.toThrow(BadRequestException);
+    await expect(service.create({} as any)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('should return todos los usuarios', async () => {
-    const expected = [{ id_usuario: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' }];
+    const expected = [
+      { id_usuario: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' },
+    ];
     query.result = { data: expected, error: null };
 
     await expect(service.findAll()).resolves.toEqual(expected);
@@ -47,7 +52,11 @@ describe('UsuariosService', () => {
   });
 
   it('should return usuario por ID', async () => {
-    const expected = { id_usuario: 1, primer_nombre: 'Ana', primer_apellido: 'Lopez' };
+    const expected = {
+      id_usuario: 1,
+      primer_nombre: 'Ana',
+      primer_apellido: 'Lopez',
+    };
     query.result = { data: expected, error: null };
 
     await expect(service.findOne(1)).resolves.toEqual(expected);

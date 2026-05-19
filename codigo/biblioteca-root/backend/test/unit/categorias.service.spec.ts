@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CategoriasService } from '../../src/categorias/categorias.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -35,7 +36,9 @@ describe('CategoriasService', () => {
   });
 
   it('should throw when nombre is missing', async () => {
-    await expect(service.create({ nombre: '' } as any)).rejects.toThrow(BadRequestException);
+    await expect(service.create({ nombre: '' } as any)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('should return todas las categorías', async () => {

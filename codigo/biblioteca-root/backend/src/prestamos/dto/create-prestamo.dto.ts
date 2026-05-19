@@ -1,4 +1,10 @@
-import { IsNumber, IsNotEmpty, IsString, IsOptional, IsDateString } from 'class-validator';
+import {
+  IsNumber,
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
 
 export class CreatePrestamoDto {
   @IsNumber()
@@ -14,7 +20,7 @@ export class CreatePrestamoDto {
   id_ejemplar!: number;
 
   // 👇 AQUÍ AGREGAMOS LOS CAMPOS QUE TE DABAN ERROR
-  
+
   @IsString()
   @IsNotEmpty()
   estado!: string;

@@ -1,11 +1,15 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateEjemplarDto } from './dto/create-ejemplar.dto';
 import { UpdateEjemplarDto } from './dto/update-ejemplar.dto';
 
 @Injectable()
 export class EjemplaresService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async create(dto: CreateEjemplarDto) {
     if (!dto.id_libro) {
@@ -22,10 +26,8 @@ export class EjemplaresService {
   }
 
   async findAll() {
-    const { data, error } = await this.supabase.client
-      .from('ejemplar')
-      //.select('*');
-      .select(`
+    const { data, error } = await //.select('*');
+    this.supabase.client.from('ejemplar').select(`
       id_ejemplar,
       codigo_barra,
       estado,
@@ -47,8 +49,8 @@ export class EjemplaresService {
 
     if (error) throw new NotFoundException('Ejemplar no encontrado');
     if (!data) {
-    throw new NotFoundException('Ejemplar no encontrado');
-  }
+      throw new NotFoundException('Ejemplar no encontrado');
+    }
     return data;
   }
 

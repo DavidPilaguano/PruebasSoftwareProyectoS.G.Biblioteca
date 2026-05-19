@@ -1,5 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
@@ -28,25 +30,31 @@ describe('Roles (e2e)', () => {
   });
 
   it('/roles (POST)', async () => {
-    const createDto = { nombre: 'Test Role', max_prestamos: 3, dias_prestamo: 15 };
+    const createDto = {
+      nombre: 'Test Role',
+      max_prestamos: 3,
+      dias_prestamo: 15,
+    };
 
     const response = await request(app.getHttpServer())
       .post('/roles')
       .send(createDto);
-    
-    // Depending on validation, this might fail initially. 
+
+    // Depending on validation, this might fail initially.
     // If it fails with 400, make sure to provide valid data.
     if (response.status === 201) {
       // Adjust according to the actual primary key name returned
-      createdId = response.body.id || response.body.id_rol || response.body.id_usuario || response.body.id_rol;
+      createdId =
+        response.body.id ||
+        response.body.id_rol ||
+        response.body.id_usuario ||
+        response.body.id_rol;
       expect(createdId).toBeDefined();
     }
   });
 
   it('/roles (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/roles')
-      .expect(200);
+    return request(app.getHttpServer()).get('/roles').expect(200);
   });
 
   it('/roles/:id (GET)', async () => {
@@ -54,9 +62,7 @@ describe('Roles (e2e)', () => {
       console.warn('Skipping GET by ID because creation failed');
       return;
     }
-    await request(app.getHttpServer())
-      .get(`/roles/${createdId}`)
-      .expect(200);
+    await request(app.getHttpServer()).get(`/roles/${createdId}`).expect(200);
   });
 
   it('/roles/:id (PATCH)', async () => {
@@ -64,7 +70,11 @@ describe('Roles (e2e)', () => {
       console.warn('Skipping PATCH because creation failed');
       return;
     }
-    const updateDto = { nombre: 'Test Role', max_prestamos: 3, dias_prestamo: 15 };
+    const updateDto = {
+      nombre: 'Test Role',
+      max_prestamos: 3,
+      dias_prestamo: 15,
+    };
 
     await request(app.getHttpServer())
       .patch(`/roles/${createdId}`)
@@ -80,7 +90,7 @@ describe('Roles (e2e)', () => {
     await request(app.getHttpServer())
       .delete(`/roles/${createdId}`)
       .expect(200);
-    
+
     createdId = null; // Successfully deleted
   });
 });

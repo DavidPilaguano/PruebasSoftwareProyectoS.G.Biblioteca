@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { PrestamosController } from '../../src/prestamos/prestamos.controller';
 import { PrestamosService } from '../../src/prestamos/prestamos.service';
 
@@ -12,7 +13,6 @@ describe('PrestamosController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-    
   };
 
   beforeEach(async () => {
@@ -36,7 +36,9 @@ describe('PrestamosController', () => {
 
   describe('create', () => {
     it('should create a new record', async () => {
-      const dto = { /* mock data */ } as any;
+      const dto = {
+        /* mock data */
+      } as any;
       const result = { id: 1, ...dto };
       jest.spyOn(service, 'create').mockResolvedValue(result);
 
@@ -67,9 +69,11 @@ describe('PrestamosController', () => {
 
   describe('update', () => {
     it('should update a record', async () => {
-      const dto = { /* mock data */ } as any;
+      const dto = {
+        /* mock data */
+      } as any;
       const result = { id: 1, ...dto };
-      jest.spyOn(service, 'update').mockResolvedValue(result as any);
+      jest.spyOn(service, 'update').mockResolvedValue(result);
 
       expect(await controller.update(1, dto)).toBe(result);
       expect(service.update).toHaveBeenCalledWith(1, dto);
@@ -85,5 +89,4 @@ describe('PrestamosController', () => {
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });
-
 });

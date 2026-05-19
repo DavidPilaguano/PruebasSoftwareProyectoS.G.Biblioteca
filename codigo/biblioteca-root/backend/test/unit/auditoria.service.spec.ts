@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { AuditoriaService } from '../../src/auditoria/auditoria.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -34,13 +35,19 @@ describe('AuditoriaService', () => {
   });
 
   it('should throw when required fields are missing', async () => {
-    await expect(service.create({ tabla_afectada: '', id_registro: null, accion: '' } as any)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.create({
+        tabla_afectada: '',
+        id_registro: null,
+        accion: '',
+      } as any),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('should return todos los registros de auditoría', async () => {
-    const expected = [{ id_auditoria: 1, tabla_afectada: 'libro', accion: 'CREAR' }];
+    const expected = [
+      { id_auditoria: 1, tabla_afectada: 'libro', accion: 'CREAR' },
+    ];
     query.result = { data: expected, error: null };
 
     await expect(service.findAll()).resolves.toEqual(expected);
@@ -48,7 +55,11 @@ describe('AuditoriaService', () => {
   });
 
   it('should return registro por ID', async () => {
-    const expected = { id_auditoria: 1, tabla_afectada: 'libro', accion: 'CREAR' };
+    const expected = {
+      id_auditoria: 1,
+      tabla_afectada: 'libro',
+      accion: 'CREAR',
+    };
     query.result = { data: expected, error: null };
 
     await expect(service.findOne(1)).resolves.toEqual(expected);
@@ -57,7 +68,11 @@ describe('AuditoriaService', () => {
 
   it('should update registro', async () => {
     const dto = { accion: 'ACTUALIZAR' };
-    const expected = { id_auditoria: 1, tabla_afectada: 'libro', accion: 'ACTUALIZAR' };
+    const expected = {
+      id_auditoria: 1,
+      tabla_afectada: 'libro',
+      accion: 'ACTUALIZAR',
+    };
     query.result = { data: expected, error: null };
 
     await expect(service.update(1, dto as any)).resolves.toEqual(expected);

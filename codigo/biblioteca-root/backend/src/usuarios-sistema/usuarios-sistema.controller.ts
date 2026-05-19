@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsuariosSistemaService } from './usuarios-sistema.service';
 import { AuthService } from './auth.service';
 import { CreateUsuarioSistemaDto } from './dto/create-usuario-sistema.dto';
@@ -7,7 +16,9 @@ import { UpdateUsuarioSistemaDto } from './dto/update-usuario-sistema.dto';
 // 👥 1. Endpoints normales para la gestión de usuarios del sistema (CRUD)
 @Controller('usuarios-sistema')
 export class UsuariosSistemaController {
-  constructor(private readonly usuariosSistemaService: UsuariosSistemaService) {}
+  constructor(
+    private readonly usuariosSistemaService: UsuariosSistemaService,
+  ) {}
 
   @Post()
   create(@Body() createUsuarioSistemaDto: CreateUsuarioSistemaDto) {

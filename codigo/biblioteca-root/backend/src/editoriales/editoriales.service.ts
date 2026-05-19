@@ -1,11 +1,15 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateEditorialDto } from './dto/create-editorial.dto';
 import { UpdateEditorialDto } from './dto/update-editorial.dto';
 
 @Injectable()
 export class EditorialesService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async create(dto: CreateEditorialDto) {
     if (!dto.nombre) {
@@ -39,8 +43,8 @@ export class EditorialesService {
 
     if (error) throw new NotFoundException('Editorial no encontrada');
     if (!data) {
-    throw new NotFoundException('Editorial no encontrada');
-  }
+      throw new NotFoundException('Editorial no encontrada');
+    }
     return data;
   }
 

@@ -1,5 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
@@ -33,20 +35,22 @@ describe('Editoriales (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/editoriales')
       .send(createDto);
-    
-    // Depending on validation, this might fail initially. 
+
+    // Depending on validation, this might fail initially.
     // If it fails with 400, make sure to provide valid data.
     if (response.status === 201) {
       // Adjust according to the actual primary key name returned
-      createdId = response.body.id || response.body.id_editorial || response.body.id_usuario || response.body.id_rol;
+      createdId =
+        response.body.id ||
+        response.body.id_editorial ||
+        response.body.id_usuario ||
+        response.body.id_rol;
       expect(createdId).toBeDefined();
     }
   });
 
   it('/editoriales (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/editoriales')
-      .expect(200);
+    return request(app.getHttpServer()).get('/editoriales').expect(200);
   });
 
   it('/editoriales/:id (GET)', async () => {
@@ -80,7 +84,7 @@ describe('Editoriales (e2e)', () => {
     await request(app.getHttpServer())
       .delete(`/editoriales/${createdId}`)
       .expect(200);
-    
+
     createdId = null; // Successfully deleted
   });
 });

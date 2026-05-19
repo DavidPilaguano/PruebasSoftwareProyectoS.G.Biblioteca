@@ -1,5 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsuariosSistemaService } from '../../src/usuarios-sistema/usuarios-sistema.service';
 import { AuthService } from '../../src/usuarios-sistema/auth.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -26,8 +31,17 @@ describe('UsuariosSistemaService', () => {
   });
 
   it('should create usuario del sistema y ocultar password_hash', async () => {
-    const dto = { username: 'admin', password: 'secret', rol_sistema: 'ADMINISTRADOR' };
-    const expected = { id_usuario_sistema: 1, username: 'admin', rol_sistema: 'ADMINISTRADOR', estado: 'ACTIVO' };
+    const dto = {
+      username: 'admin',
+      password: 'secret',
+      rol_sistema: 'ADMINISTRADOR',
+    };
+    const expected = {
+      id_usuario_sistema: 1,
+      username: 'admin',
+      rol_sistema: 'ADMINISTRADOR',
+      estado: 'ACTIVO',
+    };
 
     query.result = {
       data: { ...expected, password_hash: 'hashed' },
@@ -39,13 +53,23 @@ describe('UsuariosSistemaService', () => {
   });
 
   it('should throw when rol_sistema es inválido', async () => {
-    await expect(service.create({ username: 'admin', password: 'secret', rol_sistema: 'INVALIDO' } as any)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.create({
+        username: 'admin',
+        password: 'secret',
+        rol_sistema: 'INVALIDO',
+      } as any),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('should return todos los usuarios del sistema sin password_hash', async () => {
-    const expected = [{ id_usuario_sistema: 1, username: 'admin', rol_sistema: 'ADMINISTRADOR' }];
+    const expected = [
+      {
+        id_usuario_sistema: 1,
+        username: 'admin',
+        rol_sistema: 'ADMINISTRADOR',
+      },
+    ];
     query.result = {
       data: [{ ...expected[0], password_hash: 'hashed' }],
       error: null,
@@ -55,8 +79,15 @@ describe('UsuariosSistemaService', () => {
   });
 
   it('should return usuario del sistema por ID sin password_hash', async () => {
-    const expected = { id_usuario_sistema: 1, username: 'admin', rol_sistema: 'ADMINISTRADOR' };
-    query.result = { data: { ...expected, password_hash: 'hashed' }, error: null };
+    const expected = {
+      id_usuario_sistema: 1,
+      username: 'admin',
+      rol_sistema: 'ADMINISTRADOR',
+    };
+    query.result = {
+      data: { ...expected, password_hash: 'hashed' },
+      error: null,
+    };
 
     await expect(service.findOne(1)).resolves.toEqual(expected);
     expect(query.eq).toHaveBeenCalledWith('id_usuario_sistema', 1);
@@ -64,8 +95,15 @@ describe('UsuariosSistemaService', () => {
 
   it('should update usuario del sistema y ocultar password_hash', async () => {
     const dto = { password: 'newSecret' };
-    const expected = { id_usuario_sistema: 1, username: 'admin', rol_sistema: 'ADMINISTRADOR' };
-    query.result = { data: { ...expected, password_hash: 'newHash' }, error: null };
+    const expected = {
+      id_usuario_sistema: 1,
+      username: 'admin',
+      rol_sistema: 'ADMINISTRADOR',
+    };
+    query.result = {
+      data: { ...expected, password_hash: 'newHash' },
+      error: null,
+    };
 
     await expect(service.update(1, dto as any)).resolves.toEqual(expected);
     expect(query.update).toHaveBeenCalled();
@@ -128,6 +166,8 @@ describe('AuthService', () => {
   it('should throw UnauthorizedException for invalid credentials', async () => {
     query.result = { data: null, error: { message: 'No user' } };
 
-    await expect(authService.login('admin', 'wrong')).rejects.toThrow(UnauthorizedException);
+    await expect(authService.login('admin', 'wrong')).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 });

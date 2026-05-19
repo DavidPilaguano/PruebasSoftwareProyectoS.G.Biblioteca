@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { LibrosController } from '../../src/libros/libros.controller';
 import { LibrosService } from '../../src/libros/libros.service';
 
@@ -36,7 +37,9 @@ describe('LibrosController', () => {
 
   describe('create', () => {
     it('should create a new record', async () => {
-      const dto = { /* mock data */ } as any;
+      const dto = {
+        /* mock data */
+      } as any;
       const result = { id: 1, ...dto };
       jest.spyOn(service, 'create').mockResolvedValue(result);
 
@@ -67,9 +70,11 @@ describe('LibrosController', () => {
 
   describe('update', () => {
     it('should update a record', async () => {
-      const dto = { /* mock data */ } as any;
+      const dto = {
+        /* mock data */
+      } as any;
       const result = { id: 1, ...dto };
-      jest.spyOn(service, 'update').mockResolvedValue(result as any);
+      jest.spyOn(service, 'update').mockResolvedValue(result);
 
       expect(await controller.update(1, dto)).toBe(result);
       expect(service.update).toHaveBeenCalledWith(1, dto);
@@ -79,7 +84,7 @@ describe('LibrosController', () => {
   describe('remove', () => {
     it('should remove a record', async () => {
       const result = { deleted: true };
-      jest.spyOn(service, 'remove').mockResolvedValue(result as any);
+      jest.spyOn(service, 'remove').mockResolvedValue(result);
 
       expect(await controller.remove(1)).toBe(result);
       expect(service.remove).toHaveBeenCalledWith(1);
@@ -93,5 +98,4 @@ describe('LibrosController', () => {
       expect(await controller.getDashboardStats()).toBe(result);
     });
   });
-
 });

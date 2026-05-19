@@ -1,11 +1,15 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreatePrestamoDto } from './dto/create-prestamo.dto';
 import { UpdatePrestamoDto } from './dto/update-prestamo.dto';
 
 @Injectable()
 export class PrestamosService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async create(dto: CreatePrestamoDto) {
     const { data, error } = await this.supabase.client
@@ -19,9 +23,7 @@ export class PrestamosService {
   }
 
   async findAll() {
-    const { data, error } = await this.supabase.client
-      .from('prestamo')
-      .select(`
+    const { data, error } = await this.supabase.client.from('prestamo').select(`
         id_prestamo,
         id_usuario,                 
         id_usuario_sistema,         
@@ -54,7 +56,8 @@ export class PrestamosService {
       .eq('id_prestamo', id)
       .single();
 
-    if (error || !data) throw new NotFoundException(error?.message || 'Préstamo no encontrado');
+    if (error || !data)
+      throw new NotFoundException(error?.message || 'Préstamo no encontrado');
     return data;
   }
 

@@ -1,15 +1,21 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateRolDto } from './dto/create-rol.dto';
 import { UpdateRolDto } from './dto/update-rol.dto';
 
 @Injectable()
 export class RolesService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async create(dto: CreateRolDto) {
     if (!dto.max_prestamos || !dto.dias_prestamo) {
-      throw new BadRequestException('max_prestamos y dias_prestamo son requeridos');
+      throw new BadRequestException(
+        'max_prestamos y dias_prestamo son requeridos',
+      );
     }
     const { data, error } = await this.supabase.client
       .from('rol_usuario')
@@ -39,8 +45,8 @@ export class RolesService {
 
     if (error) throw new NotFoundException('Rol no encontrado');
     if (!data) {
-  throw new NotFoundException('Rol no encontrado');
-  }
+      throw new NotFoundException('Rol no encontrado');
+    }
     return data;
   }
 

@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { LibrosService } from '../../src/libros/libros.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -35,7 +36,9 @@ describe('LibrosService', () => {
   });
 
   it('should throw when id_categoria or id_editorial are missing', async () => {
-    await expect(service.create({ id_categoria: 0 } as any)).rejects.toThrow(BadRequestException);
+    await expect(service.create({ id_categoria: 0 } as any)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('should return todos los libros', async () => {

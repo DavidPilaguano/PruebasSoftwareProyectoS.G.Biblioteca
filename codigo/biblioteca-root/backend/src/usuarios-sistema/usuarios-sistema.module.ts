@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { UsuariosSistemaService } from './usuarios-sistema.service';
-import { UsuariosSistemaController, AuthController } from './usuarios-sistema.controller';
+import {
+  UsuariosSistemaController,
+  AuthController,
+} from './usuarios-sistema.controller';
 import { AuthService } from './auth.service';
 import { SupabaseModule } from '../supabase/supabase.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,6 +18,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [UsuariosSistemaController, AuthController], // Declaramos ambos controladores aquí
-  providers: [UsuariosSistemaService, AuthService],        // Declaramos ambos servicios aquí
+  providers: [UsuariosSistemaService, AuthService], // Declaramos ambos servicios aquí
 })
 export class UsuariosSistemaModule {}

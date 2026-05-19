@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { EjemplaresService } from '../../src/ejemplares/ejemplares.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -31,11 +32,15 @@ describe('EjemplaresService', () => {
 
     await expect(service.create(dto as any)).resolves.toEqual(expected);
     expect(supabaseMock.client.from).toHaveBeenCalledWith('ejemplar');
-    expect(query.insert).toHaveBeenCalledWith([{ ...dto, estado: 'DISPONIBLE' }]);
+    expect(query.insert).toHaveBeenCalledWith([
+      { ...dto, estado: 'DISPONIBLE' },
+    ]);
   });
 
   it('should throw when id_libro is missing', async () => {
-    await expect(service.create({ id_libro: undefined } as any)).rejects.toThrow(BadRequestException);
+    await expect(
+      service.create({ id_libro: undefined } as any),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('should return todos los ejemplares', async () => {

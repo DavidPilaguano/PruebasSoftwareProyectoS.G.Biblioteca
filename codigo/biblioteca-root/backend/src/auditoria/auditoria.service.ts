@@ -1,15 +1,21 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateAuditoriaDto } from './dto/create-auditoria.dto';
 import { UpdateAuditoriaDto } from './dto/update-auditoria.dto';
 
 @Injectable()
 export class AuditoriaService {
-  constructor(private supabase: SupabaseService) {}
+  constructor(private readonly supabase: SupabaseService) {}
 
   async create(dto: CreateAuditoriaDto) {
     if (!dto.tabla_afectada || !dto.id_registro || !dto.accion) {
-      throw new BadRequestException('tabla_afectada, id_registro y accion son requeridos');
+      throw new BadRequestException(
+        'tabla_afectada, id_registro y accion son requeridos',
+      );
     }
     const { data, error } = await this.supabase.client
       .from('auditoria')
@@ -37,7 +43,8 @@ export class AuditoriaService {
       .eq('id_auditoria', id)
       .single();
 
-    if (error || !data) throw new NotFoundException('Registro de auditoria no encontrado');
+    if (error || !data)
+      throw new NotFoundException('Registro de auditoria no encontrado');
     return data;
   }
 

@@ -1,5 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
@@ -28,25 +30,31 @@ describe('Auditoria (e2e)', () => {
   });
 
   it('/auditoria (POST)', async () => {
-    const createDto = { id_usuario_sistema: 1, accion: 'TEST', tabla_afectada: 'none' };
+    const createDto = {
+      id_usuario_sistema: 1,
+      accion: 'TEST',
+      tabla_afectada: 'none',
+    };
 
     const response = await request(app.getHttpServer())
       .post('/auditoria')
       .send(createDto);
-    
-    // Depending on validation, this might fail initially. 
+
+    // Depending on validation, this might fail initially.
     // If it fails with 400, make sure to provide valid data.
     if (response.status === 201) {
       // Adjust according to the actual primary key name returned
-      createdId = response.body.id || response.body.id_auditoria || response.body.id_usuario || response.body.id_rol;
+      createdId =
+        response.body.id ||
+        response.body.id_auditoria ||
+        response.body.id_usuario ||
+        response.body.id_rol;
       expect(createdId).toBeDefined();
     }
   });
 
   it('/auditoria (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/auditoria')
-      .expect(200);
+    return request(app.getHttpServer()).get('/auditoria').expect(200);
   });
 
   it('/auditoria/:id (GET)', async () => {
@@ -64,7 +72,11 @@ describe('Auditoria (e2e)', () => {
       console.warn('Skipping PATCH because creation failed');
       return;
     }
-    const updateDto = { id_usuario_sistema: 1, accion: 'TEST', tabla_afectada: 'none' };
+    const updateDto = {
+      id_usuario_sistema: 1,
+      accion: 'TEST',
+      tabla_afectada: 'none',
+    };
 
     await request(app.getHttpServer())
       .patch(`/auditoria/${createdId}`)
@@ -80,7 +92,7 @@ describe('Auditoria (e2e)', () => {
     await request(app.getHttpServer())
       .delete(`/auditoria/${createdId}`)
       .expect(200);
-    
+
     createdId = null; // Successfully deleted
   });
 });

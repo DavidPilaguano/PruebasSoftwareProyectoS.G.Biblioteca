@@ -1,4 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { RolesService } from '../../src/roles/roles.service';
 import { SupabaseService } from '../../src/supabase/supabase.service';
@@ -35,7 +36,9 @@ describe('RolesService', () => {
   });
 
   it('should throw when max_prestamos or dias_prestamo are missing', async () => {
-    await expect(service.create({ max_prestamos: undefined } as any)).rejects.toThrow(BadRequestException);
+    await expect(
+      service.create({ max_prestamos: undefined } as any),
+    ).rejects.toThrow(BadRequestException);
   });
 
   it('should return todos los roles', async () => {
