@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usuariosSistemaApi } from '@/lib/api';
-import { UsuarioSistema, UpdateUsuarioSistemaDto } from '@/types/biblioteca';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usuariosSistemaApi } from "@/lib/api";
+import type {
+  UsuarioSistema,
+  UpdateUsuarioSistemaDto,
+} from "@/types/biblioteca";
 
 export default function EditarUsuarioSistemaPage() {
   const router = useRouter();
@@ -17,13 +20,13 @@ export default function EditarUsuarioSistemaPage() {
   const [usuario, setUsuario] = useState<UsuarioSistema | null>(null);
 
   const [formData, setFormData] = useState<UpdateUsuarioSistemaDto>({
-    username: '',
-    primer_nombre: '',
-    segundo_nombre: '',
-    primer_apellido: '',
-    segundo_apellido: '',
-    estado: 'ACTIVO',
-    rol_sistema: 'BIBLIOTECARIO',
+    username: "",
+    primer_nombre: "",
+    segundo_nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    estado: "ACTIVO",
+    rol_sistema: "BIBLIOTECARIO",
   });
 
   useEffect(() => {
@@ -34,24 +37,30 @@ export default function EditarUsuarioSistemaPage() {
         setFormData({
           username: usuarioData.username,
           primer_nombre: usuarioData.primer_nombre,
-          segundo_nombre: usuarioData.segundo_nombre || '',
+          segundo_nombre: usuarioData.segundo_nombre || "",
           primer_apellido: usuarioData.primer_apellido,
-          segundo_apellido: usuarioData.segundo_apellido || '',
-          estado: usuarioData.estado as any,
-          rol_sistema: usuarioData.rol_sistema as any,
+          segundo_apellido: usuarioData.segundo_apellido || "",
+          estado: usuarioData.estado,
+          rol_sistema: usuarioData.rol_sistema,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando usuario del sistema');
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Error cargando usuario del sistema",
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) loadData();
+    if (id) {
+      loadData();
+    }
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -72,11 +81,15 @@ export default function EditarUsuarioSistemaPage() {
       const { username, ...payloadData } = formData;
 
       await usuariosSistemaApi.update(id, payloadData);
-      
-      router.push('/usuarios-sistema');
+
+      router.push("/usuarios-sistema");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error actualizando usuario del sistema');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error actualizando usuario del sistema",
+      );
     } finally {
       setSaving(false);
     }
@@ -87,17 +100,26 @@ export default function EditarUsuarioSistemaPage() {
   }
 
   if (!usuario) {
-    return <div className="p-6 text-center text-red-600">Usuario no encontrado</div>;
+    return (
+      <div className="p-6 text-center text-red-600">Usuario no encontrado</div>
+    );
   }
 
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link href="/usuarios-sistema" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/usuarios-sistema"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Usuarios del Sistema
         </Link>
-        <h1 className="text-3xl font-bold text-slate-900">Editar Usuario del Sistema</h1>
-        <p className="text-slate-600 mt-1">{usuario.primer_nombre} {usuario.primer_apellido}</p>
+        <h1 className="text-3xl font-bold text-slate-900">
+          Editar Usuario del Sistema
+        </h1>
+        <p className="text-slate-600 mt-1">
+          {usuario.primer_nombre} {usuario.primer_apellido}
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -120,7 +142,9 @@ export default function EditarUsuarioSistemaPage() {
               disabled
               className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600"
             />
-            <p className="text-xs text-slate-500 mt-1">El nombre de usuario no puede modificarse</p>
+            <p className="text-xs text-slate-500 mt-1">
+              El nombre de usuario no puede modificarse
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -220,7 +244,7 @@ export default function EditarUsuarioSistemaPage() {
               disabled={saving}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
             <Link
               href="/usuarios-sistema"

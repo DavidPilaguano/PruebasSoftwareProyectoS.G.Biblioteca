@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { librosApi, categoriasApi, editorialesApi } from '@/lib/api';
-import { Libro, UpdateLibroDto, Categoria, Editorial } from '@/types/biblioteca';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { librosApi, categoriasApi, editorialesApi } from "@/lib/api";
+import type {
+  Libro,
+  UpdateLibroDto,
+  Categoria,
+  Editorial,
+} from "@/types/biblioteca";
 
 export default function EditarLibroPage() {
   const router = useRouter();
@@ -19,10 +24,10 @@ export default function EditarLibroPage() {
   const [editoriales, setEditoriales] = useState<Editorial[]>([]);
 
   const [formData, setFormData] = useState<UpdateLibroDto>({
-    titulo: '',
-    isbn: '',
+    titulo: "",
+    isbn: "",
     anio_publicacion: new Date().getFullYear(),
-    descripcion: '',
+    descripcion: "",
     id_categoria: undefined,
     id_editorial: undefined,
   });
@@ -47,7 +52,7 @@ export default function EditarLibroPage() {
           id_editorial: libroData.id_editorial,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando libro');
+        setError(err instanceof Error ? err.message : "Error cargando libro");
       } finally {
         setLoading(false);
       }
@@ -57,14 +62,19 @@ export default function EditarLibroPage() {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'anio_publicacion' || name === 'id_categoria' || name === 'id_editorial' 
-        ? parseInt(value) 
-        : value,
+      [name]:
+        name === "anio_publicacion" ||
+        name === "id_categoria" ||
+        name === "id_editorial"
+          ? parseInt(value)
+          : value,
     }));
   };
 
@@ -75,9 +85,9 @@ export default function EditarLibroPage() {
 
     try {
       await librosApi.update(id, formData);
-      router.push('/libros');
+      router.push("/libros");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error actualizando libro');
+      setError(err instanceof Error ? err.message : "Error actualizando libro");
     } finally {
       setSaving(false);
     }
@@ -88,13 +98,18 @@ export default function EditarLibroPage() {
   }
 
   if (!libro) {
-    return <div className="p-6 text-center text-red-600">Libro no encontrado</div>;
+    return (
+      <div className="p-6 text-center text-red-600">Libro no encontrado</div>
+    );
   }
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/libros" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/libros"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Libros
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Editar Libro</h1>
@@ -207,7 +222,7 @@ export default function EditarLibroPage() {
               disabled={saving}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
             <Link
               href="/libros"

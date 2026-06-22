@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Link from 'next/link';
-import { rolesApi } from '@/lib/api';
-import { CreateRolUsuarioDto } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { rolesApi } from "@/lib/api";
+import type { CreateRolUsuarioDto } from "@/types/biblioteca";
 
 export default function CrearRolPage() {
   const router = useRouter();
@@ -12,20 +12,21 @@ export default function CrearRolPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<CreateRolUsuarioDto>({
-    nombre: '',
+    nombre: "",
     max_prestamos: 5,
     dias_prestamo: 14,
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'max_prestamos' || name === 'dias_prestamo' 
-        ? parseInt(value) 
-        : value,
+      [name]:
+        name === "max_prestamos" || name === "dias_prestamo"
+          ? parseInt(value)
+          : value,
     }));
   };
 
@@ -34,17 +35,21 @@ export default function CrearRolPage() {
     setLoading(true);
     setError(null);
 
-    if (!formData.nombre || formData.max_prestamos <= 0 || formData.dias_prestamo <= 0) {
-      setError('Por favor completa todos los campos correctamente');
+    if (
+      !formData.nombre ||
+      formData.max_prestamos <= 0 ||
+      formData.dias_prestamo <= 0
+    ) {
+      setError("Por favor completa todos los campos correctamente");
       setLoading(false);
       return;
     }
 
     try {
       await rolesApi.create(formData);
-      router.push('/roles');
+      router.push("/roles");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando rol');
+      setError(err instanceof Error ? err.message : "Error creando rol");
     } finally {
       setLoading(false);
     }
@@ -53,11 +58,18 @@ export default function CrearRolPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/roles" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/roles"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Roles
         </Link>
-        <h1 className="text-3xl font-bold text-slate-900">Crear Rol de Usuario</h1>
-        <p className="text-slate-600 mt-1">Define un nuevo rol con sus límites de préstamo</p>
+        <h1 className="text-3xl font-bold text-slate-900">
+          Crear Rol de Usuario
+        </h1>
+        <p className="text-slate-600 mt-1">
+          Define un nuevo rol con sus límites de préstamo
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -95,7 +107,10 @@ export default function CrearRolPage() {
               min="1"
               max="100"
             />
-            <p className="text-xs text-slate-600 mt-1">Cantidad máxima de libros que puede tener prestados simultáneamente</p>
+            <p className="text-xs text-slate-600 mt-1">
+              Cantidad máxima de libros que puede tener prestados
+              simultáneamente
+            </p>
           </div>
 
           <div>
@@ -111,7 +126,9 @@ export default function CrearRolPage() {
               min="1"
               max="365"
             />
-            <p className="text-xs text-slate-600 mt-1">Cantidad de días que se puede prestar un libro</p>
+            <p className="text-xs text-slate-600 mt-1">
+              Cantidad de días que se puede prestar un libro
+            </p>
           </div>
 
           <div className="flex gap-3 pt-4">
@@ -120,7 +137,7 @@ export default function CrearRolPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Rol'}
+              {loading ? "Creando..." : "Crear Rol"}
             </button>
             <Link
               href="/roles"

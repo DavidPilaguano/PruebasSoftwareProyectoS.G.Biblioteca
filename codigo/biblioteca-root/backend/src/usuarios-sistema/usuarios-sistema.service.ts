@@ -33,7 +33,7 @@ export class UsuariosSistemaService {
     }
 
     // Si por error el frontend manda 'password_hash' en lugar de 'password', lo manejamos
-    const passwordRaw = dto.password || String((dto as any).password_hash || '');
+    const passwordRaw = dto.password || dto.password_hash || '';
     if (!passwordRaw) {
       throw new BadRequestException(
         'La contraseña es obligatoria para la creación',
@@ -43,7 +43,7 @@ export class UsuariosSistemaService {
     const { password, ...dtoWithoutPassword } = dto;
 
     // Eliminamos cualquier rastro de password_hash que venga del body para meter el real
-    delete (dtoWithoutPassword as any).password_hash;
+    delete dtoWithoutPassword.password_hash;
 
     const dataToInsert = {
       ...dtoWithoutPassword,
@@ -92,7 +92,7 @@ export class UsuariosSistemaService {
    */
   async update(id: number, dto: UpdateUsuarioSistemaDto) {
     const { password, ...dtoWithoutPassword } = dto;
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
 
     // 1. Filtramos strings vacíos para evitar colisiones con restricciones NOT NULL
     Object.keys(dtoWithoutPassword).forEach((key) => {
@@ -115,8 +115,6 @@ export class UsuariosSistemaService {
     }
 
     // Log de control para ver el paquete real que viaja a Supabase
-    console.log('Payload limpio enviado a Supabase:', updateData);
-
     // Si no hay datos reales que cambiar tras la limpieza, retornamos el estado actual sin consultar
     if (Object.keys(updateData).length === 0) {
       return this.findOne(id);
@@ -145,7 +143,7 @@ export class UsuariosSistemaService {
    * Elimina un usuario del sistema por ID
    */
   async remove(id: number) {
-    const { data, error } = await this.supabase.client
+    const { error } = await this.supabase.client
       .from('usuario_sistema')
       .delete()
       .eq('id_usuario_sistema', id);

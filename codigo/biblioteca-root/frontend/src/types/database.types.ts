@@ -1,7 +1,12 @@
 // Tipos base que reflejan las tablas
-export type UserStatus = 'ACTIVO' | 'SUSPENDIDO' | 'INACTIVO' | 'BLOQUEADO';
-export type LoanStatus = 'ACTIVO' | 'DEVUELTO' | 'ATRASADO' | 'CANCELADO';
-export type ItemStatus = 'DISPONIBLE' | 'PRESTADO' | 'PERDIDO' | 'DANIADO' | 'MANTENIMIENTO';
+export type UserStatus = "ACTIVO" | "SUSPENDIDO" | "INACTIVO" | "BLOQUEADO";
+export type LoanStatus = "ACTIVO" | "DEVUELTO" | "ATRASADO" | "CANCELADO";
+export type ItemStatus =
+  | "DISPONIBLE"
+  | "PRESTADO"
+  | "PERDIDO"
+  | "DANIADO"
+  | "MANTENIMIENTO";
 
 export interface Libro {
   id_libro: number;
@@ -31,6 +36,6 @@ export interface Prestamo {
   fecha_devolucion_esperada: string;
   estado: LoanStatus;
   // Relaciones cargadas
-  libro?: { titulo: string }; 
+  libro?: { titulo: string };
   usuario?: { primer_nombre: string; primer_apellido: string };
 }

@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { librosApi } from '@/lib/api';
-import { Libro } from '@/types/biblioteca';
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { librosApi } from "@/lib/api";
+import type { Libro } from "@/types/biblioteca";
 
 export default function LibrosPage() {
   const [libros, setLibros] = useState<Libro[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // 🔍 1. Estado para controlar el término de búsqueda
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchLibros = async () => {
@@ -19,7 +19,7 @@ export default function LibrosPage() {
         const data = await librosApi.getAll();
         setLibros(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando libros');
+        setError(err instanceof Error ? err.message : "Error cargando libros");
       } finally {
         setLoading(false);
       }
@@ -29,13 +29,15 @@ export default function LibrosPage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('¿Deseas eliminar este libro?')) return;
+    if (!confirm("¿Deseas eliminar este libro?")) {
+      return;
+    }
 
     try {
       await librosApi.delete(id);
-      setLibros(libros.filter(l => l.id_libro !== id));
+      setLibros(libros.filter((l) => l.id_libro !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error eliminando libro');
+      alert(err instanceof Error ? err.message : "Error eliminando libro");
     }
   };
 
@@ -46,7 +48,8 @@ export default function LibrosPage() {
     return (
       libro.titulo.toLowerCase().includes(term) ||
       (libro.isbn && libro.isbn.toLowerCase().includes(term)) ||
-      (libro.categoria?.nombre && libro.categoria.nombre.toLowerCase().includes(term))
+      (libro.categoria?.nombre &&
+        libro.categoria.nombre.toLowerCase().includes(term))
     );
   });
 
@@ -84,32 +87,52 @@ export default function LibrosPage() {
 
       <div className="bg-white rounded shadow overflow-hidden">
         {loading ? (
-          <div className="p-6 text-center text-slate-600">Cargando libros...</div>
+          <div className="p-6 text-center text-slate-600">
+            Cargando libros...
+          </div>
         ) : filteredLibros.length === 0 ? ( // 💡 Evaluamos sobre la lista filtrada
           <div className="p-6 text-center text-slate-600">
-            {searchTerm ? 'No se encontraron libros que coincidan con la búsqueda' : 'No hay libros registrados'}
+            {searchTerm
+              ? "No se encontraron libros que coincidan con la búsqueda"
+              : "No hay libros registrados"}
           </div>
         ) : (
           <table className="w-full">
             <thead className="bg-slate-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Título</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">ISBN</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Año</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Categoría</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Acciones</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                  Título
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                  ISBN
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                  Año
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                  Categoría
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
               {/* 💡 Mapeamos sobre filteredLibros en vez de libros */}
               {filteredLibros.map((libro) => (
                 <tr key={libro.id_libro} className="border-b hover:bg-slate-50">
-                  <td className="px-6 py-3 text-sm text-slate-900 font-medium">{libro.titulo}</td>
-                  <td className="px-6 py-3 text-sm text-slate-600">{libro.isbn || 'N/A'}</td>
-                  <td className="px-6 py-3 text-sm text-slate-600">{libro.anio_publicacion}</td>
+                  <td className="px-6 py-3 text-sm text-slate-900 font-medium">
+                    {libro.titulo}
+                  </td>
+                  <td className="px-6 py-3 text-sm text-slate-600">
+                    {libro.isbn || "N/A"}
+                  </td>
+                  <td className="px-6 py-3 text-sm text-slate-600">
+                    {libro.anio_publicacion}
+                  </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     <span className="px-2 py-1 bg-slate-100 text-slate-800 rounded text-xs font-medium">
-                      {libro.categoria?.nombre||'Sin categoría'}
+                      {libro.categoria?.nombre || "Sin categoría"}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-sm space-x-2">

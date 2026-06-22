@@ -23,4 +23,6 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`🚀 Servidor corriendo en: http://localhost:${port}`);
 }
-bootstrap();
+bootstrap().catch((error: unknown) => {
+  console.error('Error iniciando el servidor:', error);
+});

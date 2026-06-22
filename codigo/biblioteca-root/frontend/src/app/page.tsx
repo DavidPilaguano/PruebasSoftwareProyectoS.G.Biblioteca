@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { prestamosApi, librosApi } from '@/lib/api'; // Importamos ambas APIs juntas
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { prestamosApi, librosApi } from "@/lib/api"; // Importamos ambas APIs juntas
 
 interface DashboardStats {
   libros: number;
@@ -12,25 +12,29 @@ interface DashboardStats {
 
 export default function Dashboard() {
   const [prestamosCount, setPrestamosCount] = useState(0);
-  const [stats, setStats] = useState<DashboardStats>({ libros: 0, usuarios: 0, ejemplares: 0 });
+  const [stats, setStats] = useState<DashboardStats>({
+    libros: 0,
+    usuarios: 0,
+    ejemplares: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
+
         // Ejecutamos ambas peticiones al backend en paralelo para ahorrar tiempo
         const [prestamos, statsData] = await Promise.all([
           prestamosApi.getAll(),
-          librosApi.getDashboardStats()
+          librosApi.getDashboardStats(),
         ]);
 
         // Asignamos las respuestas a sus respectivos estados
         setPrestamosCount(prestamos.length);
         setStats(statsData);
       } catch (error) {
-        console.error('Error cargando datos del dashboard:', error);
+        console.error("Error cargando datos del dashboard:", error);
       } finally {
         setLoading(false);
       }
@@ -50,33 +54,41 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Préstamos Activos */}
         <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-slate-600 text-sm font-medium">Préstamos Activos</div>
+          <div className="text-slate-600 text-sm font-medium">
+            Préstamos Activos
+          </div>
           <div className="mt-2 text-3xl font-bold text-slate-900">
-            {loading ? '...' : prestamosCount}
+            {loading ? "..." : prestamosCount}
           </div>
         </div>
 
         {/* Libros en Sistema */}
         <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-slate-600 text-sm font-medium">Libros en Sistema</div>
+          <div className="text-slate-600 text-sm font-medium">
+            Libros en Sistema
+          </div>
           <div className="mt-2 text-3xl font-bold text-slate-900">
-            {loading ? '...' : stats.libros}
+            {loading ? "..." : stats.libros}
           </div>
         </div>
 
         {/* Usuarios Registrados */}
         <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-slate-600 text-sm font-medium">Usuarios Registrados</div>
+          <div className="text-slate-600 text-sm font-medium">
+            Usuarios Registrados
+          </div>
           <div className="mt-2 text-3xl font-bold text-slate-900">
-            {loading ? '...' : stats.usuarios}
+            {loading ? "..." : stats.usuarios}
           </div>
         </div>
 
         {/* Ejemplares Disponibles */}
         <div className="bg-white rounded-lg shadow p-6">
-          <div className="text-slate-600 text-sm font-medium">Ejemplares Disponibles</div>
+          <div className="text-slate-600 text-sm font-medium">
+            Ejemplares Disponibles
+          </div>
           <div className="mt-2 text-3xl font-bold text-slate-900">
-            {loading ? '...' : stats.ejemplares}
+            {loading ? "..." : stats.ejemplares}
           </div>
         </div>
       </div>
@@ -84,7 +96,9 @@ export default function Dashboard() {
       {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Acciones Rápidas</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">
+            Acciones Rápidas
+          </h2>
           <div className="space-y-2">
             <Link
               href="/prestamos/crear"
@@ -108,7 +122,9 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">Módulos Disponibles</h2>
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">
+            Módulos Disponibles
+          </h2>
           <ul className="space-y-2 text-sm">
             <li>
               <Link href="/libros" className="text-blue-600 hover:underline">
@@ -116,7 +132,10 @@ export default function Dashboard() {
               </Link>
             </li>
             <li>
-              <Link href="/ejemplares" className="text-blue-600 hover:underline">
+              <Link
+                href="/ejemplares"
+                className="text-blue-600 hover:underline"
+              >
                 Gestión de Ejemplares
               </Link>
             </li>

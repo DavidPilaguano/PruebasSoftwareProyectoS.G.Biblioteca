@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ejemplaresApi, librosApi } from '@/lib/api';
-import { Ejemplar, UpdateEjemplarDto, Libro } from '@/types/biblioteca';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ejemplaresApi, librosApi } from "@/lib/api";
+import type { Ejemplar, UpdateEjemplarDto, Libro } from "@/types/biblioteca";
 
 export default function EditarEjemplarPage() {
   const router = useRouter();
@@ -18,8 +18,8 @@ export default function EditarEjemplarPage() {
   const [libros, setLibros] = useState<Libro[]>([]);
 
   const [formData, setFormData] = useState<UpdateEjemplarDto>({
-    estado: 'DISPONIBLE',
-    ubicacion_fisica: '',
+    estado: "DISPONIBLE",
+    ubicacion_fisica: "",
   });
 
   useEffect(() => {
@@ -33,10 +33,12 @@ export default function EditarEjemplarPage() {
         setLibros(librosData);
         setFormData({
           estado: ejemplarData.estado,
-          ubicacion_fisica: ejemplarData.ubicacion_fisica || '',
+          ubicacion_fisica: ejemplarData.ubicacion_fisica || "",
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando ejemplar');
+        setError(
+          err instanceof Error ? err.message : "Error cargando ejemplar",
+        );
       } finally {
         setLoading(false);
       }
@@ -46,7 +48,7 @@ export default function EditarEjemplarPage() {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -62,9 +64,11 @@ export default function EditarEjemplarPage() {
 
     try {
       await ejemplaresApi.update(id, formData);
-      router.push('/ejemplares');
+      router.push("/ejemplares");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error actualizando ejemplar');
+      setError(
+        err instanceof Error ? err.message : "Error actualizando ejemplar",
+      );
     } finally {
       setSaving(false);
     }
@@ -75,17 +79,24 @@ export default function EditarEjemplarPage() {
   }
 
   if (!ejemplar) {
-    return <div className="p-6 text-center text-red-600">Ejemplar no encontrado</div>;
+    return (
+      <div className="p-6 text-center text-red-600">Ejemplar no encontrado</div>
+    );
   }
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/ejemplares" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/ejemplares"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Ejemplares
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Editar Ejemplar</h1>
-        <p className="text-slate-600 mt-1">Código: {ejemplar.codigo_barra || 'N/A'}</p>
+        <p className="text-slate-600 mt-1">
+          Código: {ejemplar.codigo_barra || "N/A"}
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -103,7 +114,7 @@ export default function EditarEjemplarPage() {
             <input
               type="text"
               disabled
-              value={ejemplar.libro?.titulo || 'No disponible'}
+              value={ejemplar.libro?.titulo || "No disponible"}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600"
             />
           </div>
@@ -146,7 +157,7 @@ export default function EditarEjemplarPage() {
               disabled={saving}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
             <Link
               href="/ejemplares"

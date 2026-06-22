@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Link from 'next/link';
-import { usuariosSistemaApi } from '@/lib/api';
-import { CreateUsuarioSistemaDto } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { usuariosSistemaApi } from "@/lib/api";
+import type { CreateUsuarioSistemaDto } from "@/types/biblioteca";
 
 export default function CrearUsuarioSistemaPage() {
   const router = useRouter();
@@ -13,18 +13,18 @@ export default function CrearUsuarioSistemaPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<CreateUsuarioSistemaDto>({
-    username: '',
-    password_hash: '',
-    primer_nombre: '',
-    segundo_nombre: '',
-    primer_apellido: '',
-    segundo_apellido: '',
-    estado: 'ACTIVO',
-    rol_sistema: 'BIBLIOTECARIO',
+    username: "",
+    password_hash: "",
+    primer_nombre: "",
+    segundo_nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    estado: "ACTIVO",
+    rol_sistema: "BIBLIOTECARIO",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -38,23 +38,32 @@ export default function CrearUsuarioSistemaPage() {
     setLoading(true);
     setError(null);
 
-    if (!formData.username || !formData.password_hash || !formData.primer_nombre || !formData.primer_apellido) {
-      setError('Por favor completa todos los campos requeridos');
+    if (
+      !formData.username ||
+      !formData.password_hash ||
+      !formData.primer_nombre ||
+      !formData.primer_apellido
+    ) {
+      setError("Por favor completa todos los campos requeridos");
       setLoading(false);
       return;
     }
 
     if (formData.password_hash.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       setLoading(false);
       return;
     }
 
     try {
       await usuariosSistemaApi.create(formData);
-      router.push('/usuarios-sistema');
+      router.push("/usuarios-sistema");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando usuario del sistema');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Error creando usuario del sistema",
+      );
     } finally {
       setLoading(false);
     }
@@ -63,11 +72,18 @@ export default function CrearUsuarioSistemaPage() {
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link href="/usuarios-sistema" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/usuarios-sistema"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Usuarios del Sistema
         </Link>
-        <h1 className="text-3xl font-bold text-slate-900">Crear Usuario del Sistema</h1>
-        <p className="text-slate-600 mt-1">Registra un nuevo bibliotecario o administrador</p>
+        <h1 className="text-3xl font-bold text-slate-900">
+          Crear Usuario del Sistema
+        </h1>
+        <p className="text-slate-600 mt-1">
+          Registra un nuevo bibliotecario o administrador
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -98,7 +114,7 @@ export default function CrearUsuarioSistemaPage() {
             </label>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password_hash"
                 value={formData.password_hash}
                 onChange={handleChange}
@@ -110,7 +126,7 @@ export default function CrearUsuarioSistemaPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-2 text-slate-600 text-sm"
               >
-                {showPassword ? 'Ocultar' : 'Mostrar'}
+                {showPassword ? "Ocultar" : "Mostrar"}
               </button>
             </div>
           </div>
@@ -191,7 +207,8 @@ export default function CrearUsuarioSistemaPage() {
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded p-4 text-sm text-blue-900">
-            <strong>Nota:</strong> El estado inicial será "ACTIVO". Los usuarios del sistema pueden ser modificados después de su creación.
+            <strong>Nota:</strong> El estado inicial será "ACTIVO". Los usuarios
+            del sistema pueden ser modificados después de su creación.
           </div>
 
           <div className="flex gap-3 pt-4">
@@ -200,7 +217,7 @@ export default function CrearUsuarioSistemaPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Usuario'}
+              {loading ? "Creando..." : "Crear Usuario"}
             </button>
             <Link
               href="/usuarios-sistema"

@@ -74,7 +74,7 @@ export interface Ejemplar {
   id_ejemplar: number;
   codigo_barra?: string;
   id_libro: number;
-  estado: 'DISPONIBLE' | 'PRESTADO' | 'PERDIDO' | 'DANIADO' | 'MANTENIMIENTO';
+  estado: "DISPONIBLE" | "PRESTADO" | "PERDIDO" | "DANIADO" | "MANTENIMIENTO";
   ubicacion_fisica?: string;
   fecha_adquisicion?: string;
   libro?: Libro;
@@ -83,13 +83,13 @@ export interface Ejemplar {
 export interface CreateEjemplarDto {
   codigo_barra?: string;
   id_libro: number;
-  estado?: 'DISPONIBLE';
+  estado?: "DISPONIBLE";
   ubicacion_fisica?: string;
   fecha_adquisicion?: string;
 }
 
 export interface UpdateEjemplarDto {
-  estado?: 'DISPONIBLE' | 'PRESTADO' | 'PERDIDO' | 'DANIADO' | 'MANTENIMIENTO';
+  estado?: "DISPONIBLE" | "PRESTADO" | "PERDIDO" | "DANIADO" | "MANTENIMIENTO";
   ubicacion_fisica?: string;
 }
 
@@ -103,7 +103,7 @@ export interface Usuario {
   segundo_apellido?: string;
   correo: string;
   telefono?: string;
-  estado: 'ACTIVO' | 'SUSPENDIDO' | 'INACTIVO' | 'BLOQUEADO';
+  estado: "ACTIVO" | "SUSPENDIDO" | "INACTIVO" | "BLOQUEADO";
   id_rol: number;
   rol?: RolUsuario;
 }
@@ -117,7 +117,7 @@ export interface CreateUsuarioDto {
   segundo_apellido?: string;
   correo: string;
   telefono?: string;
-  estado?: 'ACTIVO';
+  estado?: "ACTIVO";
   id_rol: number;
 }
 
@@ -130,7 +130,7 @@ export interface UpdateUsuarioDto {
   segundo_apellido?: string;
   correo?: string;
   telefono?: string;
-  estado?: 'ACTIVO' | 'SUSPENDIDO' | 'INACTIVO' | 'BLOQUEADO';
+  estado?: "ACTIVO" | "SUSPENDIDO" | "INACTIVO" | "BLOQUEADO";
   id_rol?: number;
 }
 
@@ -161,7 +161,7 @@ export interface Prestamo {
   fecha_prestamo: string;
   fecha_devolucion_esperada?: string;
   fecha_devolucion_real?: string;
-  estado: 'ACTIVO' | 'DEVUELTO' | 'ATRASADO' | 'CANCELADO';
+  estado: "ACTIVO" | "DEVUELTO" | "ATRASADO" | "CANCELADO";
   usuario?: Usuario;
   usuario_sistema?: UsuarioSistema;
   ejemplar?: Ejemplar;
@@ -184,12 +184,12 @@ export interface CreatePrestamoDto {
   id_usuario_sistema: number;
   id_ejemplar: number;
   fecha_devolucion_esperada: string;
-  estado: string;               
-  fecha_devolucion_real?: string; 
+  estado: string;
+  fecha_devolucion_real?: string;
 }
 
 export interface UpdatePrestamoDto {
-  estado?: 'ACTIVO' | 'DEVUELTO' | 'ATRASADO' | 'CANCELADO';
+  estado?: "ACTIVO" | "DEVUELTO" | "ATRASADO" | "CANCELADO";
   fecha_devolucion_real?: string;
   fecha_devolucion_esperada?: string;
 }
@@ -201,8 +201,8 @@ export interface UsuarioSistema {
   segundo_nombre?: string;
   primer_apellido: string;
   segundo_apellido?: string;
-  estado: 'ACTIVO' | 'INACTIVO' | 'BLOQUEADO';
-  rol_sistema: 'ADMINISTRADOR' | 'BIBLIOTECARIO';
+  estado: "ACTIVO" | "INACTIVO" | "BLOQUEADO";
+  rol_sistema: "ADMINISTRADOR" | "BIBLIOTECARIO";
 }
 
 export interface CreateUsuarioSistemaDto {
@@ -212,8 +212,8 @@ export interface CreateUsuarioSistemaDto {
   segundo_nombre?: string;
   primer_apellido: string;
   segundo_apellido?: string;
-  estado?: 'ACTIVO';
-  rol_sistema: 'ADMINISTRADOR' | 'BIBLIOTECARIO';
+  estado?: "ACTIVO";
+  rol_sistema: "ADMINISTRADOR" | "BIBLIOTECARIO";
 }
 
 export interface UpdateUsuarioSistemaDto {
@@ -222,15 +222,15 @@ export interface UpdateUsuarioSistemaDto {
   segundo_nombre?: string;
   primer_apellido?: string;
   segundo_apellido?: string;
-  estado?: 'ACTIVO' | 'INACTIVO' | 'BLOQUEADO';
-  rol_sistema?: 'ADMINISTRADOR' | 'BIBLIOTECARIO';
+  estado?: "ACTIVO" | "INACTIVO" | "BLOQUEADO";
+  rol_sistema?: "ADMINISTRADOR" | "BIBLIOTECARIO";
 }
 
 export interface Auditoria {
   id_auditoria: number;
   tabla_afectada: string;
   id_registro: number;
-  accion: 'INSERT' | 'UPDATE' | 'DELETE';
+  accion: "INSERT" | "UPDATE" | "DELETE";
   usuario_sistema: string;
   fecha_evento: string;
   valor_anterior?: string;
@@ -244,7 +244,7 @@ export interface Reserva {
   id_libro: number;
   fecha_reserva: string;
   fecha_expiracion: string;
-  estado: 'ACTIVA' | 'EXPIRADA' | 'COMPLETADA' | 'CANCELADA';
+  estado: "ACTIVA" | "EXPIRADA" | "COMPLETADA" | "CANCELADA";
   usuario?: Usuario;
   libro?: Libro;
 }
@@ -257,7 +257,7 @@ export interface Sancion {
   tipo: string;
   monto: number;
   motivo?: string;
-  estado: 'PENDIENTE' | 'PAGADA' | 'ACTIVA' | 'CONDONADA';
+  estado: "PENDIENTE" | "PAGADA" | "ACTIVA" | "CONDONADA";
   fecha_inicio: string;
   fecha_fin?: string;
 }

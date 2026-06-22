@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Link from 'next/link';
-import { autoresApi } from '@/lib/api';
-import { CreateAutorDto } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { autoresApi } from "@/lib/api";
+import type { CreateAutorDto } from "@/types/biblioteca";
 
 export default function CrearAutorPage() {
   const router = useRouter();
@@ -12,16 +12,14 @@ export default function CrearAutorPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<CreateAutorDto>({
-    primer_nombre: '',
-    segundo_nombre: '',
-    primer_apellido: '',
-    segundo_apellido: '',
-    nacionalidad: '',
+    primer_nombre: "",
+    segundo_nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    nacionalidad: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -35,16 +33,16 @@ export default function CrearAutorPage() {
     setError(null);
 
     if (!formData.primer_nombre || !formData.primer_apellido) {
-      setError('Por favor completa el nombre y apellido del autor');
+      setError("Por favor completa el nombre y apellido del autor");
       setLoading(false);
       return;
     }
 
     try {
       await autoresApi.create(formData);
-      router.push('/libros/crear');
+      router.push("/libros/crear");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando autor');
+      setError(err instanceof Error ? err.message : "Error creando autor");
     } finally {
       setLoading(false);
     }
@@ -53,7 +51,10 @@ export default function CrearAutorPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/libros/crear" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/libros/crear"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Crear Libro
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Crear Autor</h1>
@@ -148,7 +149,7 @@ export default function CrearAutorPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Autor'}
+              {loading ? "Creando..." : "Crear Autor"}
             </button>
             <Link
               href="/libros/crear"

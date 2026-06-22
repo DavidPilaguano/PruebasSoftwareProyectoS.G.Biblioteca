@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usuariosApi, rolesApi } from '@/lib/api';
-import { Usuario, UpdateUsuarioDto, RolUsuario } from '@/types/biblioteca';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usuariosApi, rolesApi } from "@/lib/api";
+import type { Usuario, UpdateUsuarioDto, RolUsuario } from "@/types/biblioteca";
 
 export default function EditarUsuarioPage() {
   const router = useRouter();
@@ -18,15 +18,15 @@ export default function EditarUsuarioPage() {
   const [roles, setRoles] = useState<RolUsuario[]>([]);
 
   const [formData, setFormData] = useState<UpdateUsuarioDto>({
-    cedula: '',
-    codigo_institucional: '',
-    primer_nombre: '',
-    segundo_nombre: '',
-    primer_apellido: '',
-    segundo_apellido: '',
-    correo: '',
-    telefono: '',
-    estado: 'ACTIVO',
+    cedula: "",
+    codigo_institucional: "",
+    primer_nombre: "",
+    segundo_nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    correo: "",
+    telefono: "",
+    estado: "ACTIVO",
     id_rol: 0,
   });
 
@@ -40,19 +40,19 @@ export default function EditarUsuarioPage() {
         setUsuario(usuarioData);
         setRoles(rolesData);
         setFormData({
-          cedula: usuarioData.cedula || '',
+          cedula: usuarioData.cedula || "",
           codigo_institucional: usuarioData.codigo_institucional,
           primer_nombre: usuarioData.primer_nombre,
-          segundo_nombre: usuarioData.segundo_nombre || '',
+          segundo_nombre: usuarioData.segundo_nombre || "",
           primer_apellido: usuarioData.primer_apellido,
-          segundo_apellido: usuarioData.segundo_apellido || '',
+          segundo_apellido: usuarioData.segundo_apellido || "",
           correo: usuarioData.correo,
-          telefono: usuarioData.telefono || '',
-          estado: usuarioData.estado as any,
+          telefono: usuarioData.telefono || "",
+          estado: usuarioData.estado,
           id_rol: usuarioData.id_rol,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando usuario');
+        setError(err instanceof Error ? err.message : "Error cargando usuario");
       } finally {
         setLoading(false);
       }
@@ -62,12 +62,12 @@ export default function EditarUsuarioPage() {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'id_rol' ? parseInt(value) : value,
+      [name]: name === "id_rol" ? parseInt(value) : value,
     }));
   };
 
@@ -78,9 +78,11 @@ export default function EditarUsuarioPage() {
 
     try {
       await usuariosApi.update(id, formData);
-      router.push('/usuarios');
+      router.push("/usuarios");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error actualizando usuario');
+      setError(
+        err instanceof Error ? err.message : "Error actualizando usuario",
+      );
     } finally {
       setSaving(false);
     }
@@ -91,17 +93,24 @@ export default function EditarUsuarioPage() {
   }
 
   if (!usuario) {
-    return <div className="p-6 text-center text-red-600">Usuario no encontrado</div>;
+    return (
+      <div className="p-6 text-center text-red-600">Usuario no encontrado</div>
+    );
   }
 
   return (
     <div className="max-w-3xl">
       <div className="mb-6">
-        <Link href="/usuarios" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/usuarios"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Usuarios
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Editar Usuario</h1>
-        <p className="text-slate-600 mt-1">{usuario.primer_nombre} {usuario.primer_apellido}</p>
+        <p className="text-slate-600 mt-1">
+          {usuario.primer_nombre} {usuario.primer_apellido}
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -264,7 +273,7 @@ export default function EditarUsuarioPage() {
               disabled={saving}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
             <Link
               href="/usuarios"

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { ejemplaresApi, librosApi } from '@/lib/api';
-import { CreateEjemplarDto, Libro } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ejemplaresApi, librosApi } from "@/lib/api";
+import type { CreateEjemplarDto, Libro } from "@/types/biblioteca";
 
 export default function CrearEjemplarPage() {
   const router = useRouter();
@@ -14,11 +14,11 @@ export default function CrearEjemplarPage() {
   const [loadingData, setLoadingData] = useState(true);
 
   const [formData, setFormData] = useState<CreateEjemplarDto>({
-    codigo_barra: '',
+    codigo_barra: "",
     id_libro: 0,
-    estado: 'DISPONIBLE',
-    ubicacion_fisica: '',
-    fecha_adquisicion: new Date().toISOString().split('T')[0],
+    estado: "DISPONIBLE",
+    ubicacion_fisica: "",
+    fecha_adquisicion: new Date().toISOString().split("T")[0],
   });
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function CrearEjemplarPage() {
         const data = await librosApi.getAll();
         setLibros(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando libros');
+        setError(err instanceof Error ? err.message : "Error cargando libros");
       } finally {
         setLoadingData(false);
       }
@@ -37,12 +37,12 @@ export default function CrearEjemplarPage() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'id_libro' ? parseInt(value) : value,
+      [name]: name === "id_libro" ? parseInt(value) : value,
     }));
   };
 
@@ -52,33 +52,40 @@ export default function CrearEjemplarPage() {
     setError(null);
 
     if (!formData.id_libro) {
-      setError('Por favor selecciona un libro');
+      setError("Por favor selecciona un libro");
       setLoading(false);
       return;
     }
 
     try {
       await ejemplaresApi.create(formData);
-      router.push('/ejemplares');
+      router.push("/ejemplares");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando ejemplar');
+      setError(err instanceof Error ? err.message : "Error creando ejemplar");
     } finally {
       setLoading(false);
     }
   };
 
   if (loadingData) {
-    return <div className="p-6 text-center text-slate-600">Cargando datos...</div>;
+    return (
+      <div className="p-6 text-center text-slate-600">Cargando datos...</div>
+    );
   }
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/ejemplares" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/ejemplares"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Ejemplares
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Crear Ejemplar</h1>
-        <p className="text-slate-600 mt-1">Registra una nueva copia de un libro</p>
+        <p className="text-slate-600 mt-1">
+          Registra una nueva copia de un libro
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -155,7 +162,7 @@ export default function CrearEjemplarPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Ejemplar'}
+              {loading ? "Creando..." : "Crear Ejemplar"}
             </button>
             <Link
               href="/ejemplares"

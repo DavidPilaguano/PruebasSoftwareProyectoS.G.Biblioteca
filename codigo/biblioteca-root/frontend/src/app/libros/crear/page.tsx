@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { librosApi, categoriasApi, editorialesApi } from '@/lib/api';
-import { CreateLibroDto, Categoria, Editorial } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { librosApi, categoriasApi, editorialesApi } from "@/lib/api";
+import type { CreateLibroDto, Categoria, Editorial } from "@/types/biblioteca";
 
 export default function CrearLibroPage() {
   const router = useRouter();
@@ -15,10 +15,10 @@ export default function CrearLibroPage() {
   const [loadingData, setLoadingData] = useState(true);
 
   const [formData, setFormData] = useState<CreateLibroDto>({
-    titulo: '',
-    isbn: '',
+    titulo: "",
+    isbn: "",
     anio_publicacion: new Date().getFullYear(),
-    descripcion: '',
+    descripcion: "",
     id_categoria: 0,
     id_editorial: 0,
   });
@@ -33,7 +33,7 @@ export default function CrearLibroPage() {
         setCategorias(cats);
         setEditoriales(edits);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando datos');
+        setError(err instanceof Error ? err.message : "Error cargando datos");
       } finally {
         setLoadingData(false);
       }
@@ -43,14 +43,19 @@ export default function CrearLibroPage() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'anio_publicacion' || name === 'id_categoria' || name === 'id_editorial' 
-        ? parseInt(value) 
-        : value,
+      [name]:
+        name === "anio_publicacion" ||
+        name === "id_categoria" ||
+        name === "id_editorial"
+          ? parseInt(value)
+          : value,
     }));
   };
 
@@ -59,30 +64,40 @@ export default function CrearLibroPage() {
     setLoading(true);
     setError(null);
 
-    if (!formData.titulo || !formData.isbn || !formData.id_categoria || !formData.id_editorial) {
-      setError('Por favor completa todos los campos requeridos');
+    if (
+      !formData.titulo ||
+      !formData.isbn ||
+      !formData.id_categoria ||
+      !formData.id_editorial
+    ) {
+      setError("Por favor completa todos los campos requeridos");
       setLoading(false);
       return;
     }
 
     try {
       await librosApi.create(formData);
-      router.push('/libros');
+      router.push("/libros");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando libro');
+      setError(err instanceof Error ? err.message : "Error creando libro");
     } finally {
       setLoading(false);
     }
   };
 
   if (loadingData) {
-    return <div className="p-6 text-center text-slate-600">Cargando datos...</div>;
+    return (
+      <div className="p-6 text-center text-slate-600">Cargando datos...</div>
+    );
   }
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/libros" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/libros"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Libros
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Crear Libro</h1>
@@ -214,7 +229,7 @@ export default function CrearLibroPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Libro'}
+              {loading ? "Creando..." : "Crear Libro"}
             </button>
             <Link
               href="/libros"

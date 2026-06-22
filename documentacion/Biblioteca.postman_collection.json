@@ -1,0 +1,688 @@
+{
+  "info": {
+    "_postman_id": "9e9d9c71-0f8b-4cc0-8e5e-biblioteca-api",
+    "name": "Sistema Biblioteca API",
+    "description": "Coleccion para probar el backend NestJS del Sistema de Gestion de Biblioteca.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password_hash\": \"123456\"\n}"
+            },
+            "url": "{{base_url}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "GET /roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/roles"
+          }
+        },
+        {
+          "name": "GET /roles/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/roles/{{rol_id}}"
+          }
+        },
+        {
+          "name": "POST /roles",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"ESTUDIANTE\",\n  \"max_prestamos\": 3,\n  \"dias_prestamo\": 14\n}"
+            },
+            "url": "{{base_url}}/roles"
+          }
+        },
+        {
+          "name": "PATCH /roles/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"max_prestamos\": 5,\n  \"dias_prestamo\": 21\n}"
+            },
+            "url": "{{base_url}}/roles/{{rol_id}}"
+          }
+        },
+        {
+          "name": "DELETE /roles/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/roles/{{rol_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios Sistema",
+      "item": [
+        {
+          "name": "GET /usuarios-sistema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/usuarios-sistema"
+          }
+        },
+        {
+          "name": "GET /usuarios-sistema/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/usuarios-sistema/{{usuario_sistema_id}}"
+          }
+        },
+        {
+          "name": "POST /usuarios-sistema",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"123456\",\n  \"primer_nombre\": \"Admin\",\n  \"segundo_nombre\": \"\",\n  \"primer_apellido\": \"Sistema\",\n  \"segundo_apellido\": \"\",\n  \"estado\": \"ACTIVO\",\n  \"rol_sistema\": \"ADMINISTRADOR\"\n}"
+            },
+            "url": "{{base_url}}/usuarios-sistema"
+          }
+        },
+        {
+          "name": "PATCH /usuarios-sistema/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"primer_nombre\": \"Administrador\",\n  \"estado\": \"ACTIVO\",\n  \"rol_sistema\": \"ADMINISTRADOR\"\n}"
+            },
+            "url": "{{base_url}}/usuarios-sistema/{{usuario_sistema_id}}"
+          }
+        },
+        {
+          "name": "DELETE /usuarios-sistema/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/usuarios-sistema/{{usuario_sistema_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "GET /usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/usuarios"
+          }
+        },
+        {
+          "name": "GET /usuarios/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/usuarios/{{usuario_id}}"
+          }
+        },
+        {
+          "name": "POST /usuarios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cedula\": \"1723456789\",\n  \"codigo_institucional\": \"U001\",\n  \"primer_nombre\": \"Juan\",\n  \"segundo_nombre\": \"Carlos\",\n  \"primer_apellido\": \"Perez\",\n  \"segundo_apellido\": \"Lopez\",\n  \"correo\": \"juan.perez@test.com\",\n  \"telefono\": \"0999999999\",\n  \"estado\": \"ACTIVO\",\n  \"id_rol\": 1\n}"
+            },
+            "url": "{{base_url}}/usuarios"
+          }
+        },
+        {
+          "name": "PATCH /usuarios/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"0988888888\",\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": "{{base_url}}/usuarios/{{usuario_id}}"
+          }
+        },
+        {
+          "name": "DELETE /usuarios/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/usuarios/{{usuario_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalogos",
+      "item": [
+        {
+          "name": "Categorias",
+          "item": [
+            {
+              "name": "GET /categorias",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{base_url}}/categorias"
+              }
+            },
+            {
+              "name": "GET /categorias/:id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{base_url}}/categorias/{{categoria_id}}"
+              }
+            },
+            {
+              "name": "POST /categorias",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Programacion\",\n  \"descripcion\": \"Libros de desarrollo de software\"\n}"
+                },
+                "url": "{{base_url}}/categorias"
+              }
+            },
+            {
+              "name": "PATCH /categorias/:id",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"descripcion\": \"Libros actualizados de programacion\"\n}"
+                },
+                "url": "{{base_url}}/categorias/{{categoria_id}}"
+              }
+            },
+            {
+              "name": "DELETE /categorias/:id",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{base_url}}/categorias/{{categoria_id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Editoriales",
+          "item": [
+            {
+              "name": "GET /editoriales",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{base_url}}/editoriales"
+              }
+            },
+            {
+              "name": "GET /editoriales/:id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{base_url}}/editoriales/{{editorial_id}}"
+              }
+            },
+            {
+              "name": "POST /editoriales",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Pearson\",\n  \"pais\": \"Estados Unidos\"\n}"
+                },
+                "url": "{{base_url}}/editoriales"
+              }
+            },
+            {
+              "name": "PATCH /editoriales/:id",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pais\": \"USA\"\n}"
+                },
+                "url": "{{base_url}}/editoriales/{{editorial_id}}"
+              }
+            },
+            {
+              "name": "DELETE /editoriales/:id",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{base_url}}/editoriales/{{editorial_id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Autores",
+          "item": [
+            {
+              "name": "GET /autores",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{base_url}}/autores"
+              }
+            },
+            {
+              "name": "GET /autores/:id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{base_url}}/autores/{{autor_id}}"
+              }
+            },
+            {
+              "name": "POST /autores",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"primer_nombre\": \"Robert\",\n  \"segundo_nombre\": \"\",\n  \"primer_apellido\": \"Martin\",\n  \"segundo_apellido\": \"\",\n  \"nacionalidad\": \"Estadounidense\"\n}"
+                },
+                "url": "{{base_url}}/autores"
+              }
+            },
+            {
+              "name": "PATCH /autores/:id",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nacionalidad\": \"USA\"\n}"
+                },
+                "url": "{{base_url}}/autores/{{autor_id}}"
+              }
+            },
+            {
+              "name": "DELETE /autores/:id",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{base_url}}/autores/{{autor_id}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Libros",
+      "item": [
+        {
+          "name": "GET /libros/dashboard/stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/libros/dashboard/stats"
+          }
+        },
+        {
+          "name": "GET /libros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/libros"
+          }
+        },
+        {
+          "name": "GET /libros/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/libros/{{libro_id}}"
+          }
+        },
+        {
+          "name": "POST /libros",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isbn\": \"9780132350884\",\n  \"titulo\": \"Clean Code\",\n  \"anio_publicacion\": 2008,\n  \"descripcion\": \"Libro sobre buenas practicas de programacion\",\n  \"id_categoria\": 1,\n  \"id_editorial\": 1\n}"
+            },
+            "url": "{{base_url}}/libros"
+          }
+        },
+        {
+          "name": "PATCH /libros/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Clean Code Actualizado\",\n  \"anio_publicacion\": 2008\n}"
+            },
+            "url": "{{base_url}}/libros/{{libro_id}}"
+          }
+        },
+        {
+          "name": "DELETE /libros/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/libros/{{libro_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ejemplares",
+      "item": [
+        {
+          "name": "GET /ejemplares",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/ejemplares"
+          }
+        },
+        {
+          "name": "GET /ejemplares/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/ejemplares/{{ejemplar_id}}"
+          }
+        },
+        {
+          "name": "POST /ejemplares",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo_barra\": \"LIB-001\",\n  \"id_libro\": \"1\",\n  \"estado\": \"DISPONIBLE\",\n  \"ubicacion_fisica\": \"Estante A1\",\n  \"fecha_adquisicion\": \"2026-06-22\"\n}"
+            },
+            "url": "{{base_url}}/ejemplares"
+          }
+        },
+        {
+          "name": "PATCH /ejemplares/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"DISPONIBLE\",\n  \"ubicacion_fisica\": \"Estante B2\"\n}"
+            },
+            "url": "{{base_url}}/ejemplares/{{ejemplar_id}}"
+          }
+        },
+        {
+          "name": "DELETE /ejemplares/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/ejemplares/{{ejemplar_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prestamos",
+      "item": [
+        {
+          "name": "GET /prestamos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/prestamos"
+          }
+        },
+        {
+          "name": "GET /prestamos/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/prestamos/{{prestamo_id}}"
+          }
+        },
+        {
+          "name": "POST /prestamos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": 1,\n  \"id_usuario_sistema\": 1,\n  \"id_ejemplar\": 1,\n  \"estado\": \"ACTIVO\",\n  \"fecha_devolucion_esperada\": \"2026-07-06\"\n}"
+            },
+            "url": "{{base_url}}/prestamos"
+          }
+        },
+        {
+          "name": "PATCH /prestamos/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"DEVUELTO\",\n  \"fecha_devolucion_real\": \"2026-06-22\"\n}"
+            },
+            "url": "{{base_url}}/prestamos/{{prestamo_id}}"
+          }
+        },
+        {
+          "name": "DELETE /prestamos/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/prestamos/{{prestamo_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auditoria",
+      "item": [
+        {
+          "name": "GET /auditoria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/auditoria"
+          }
+        },
+        {
+          "name": "GET /auditoria/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/auditoria/{{auditoria_id}}"
+          }
+        },
+        {
+          "name": "POST /auditoria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tabla_afectada\": \"libro\",\n  \"id_registro\": 1,\n  \"accion\": \"INSERT\",\n  \"usuario_sistema\": \"admin\",\n  \"valor_anterior\": null,\n  \"valor_nuevo\": \"Registro creado\"\n}"
+            },
+            "url": "{{base_url}}/auditoria"
+          }
+        },
+        {
+          "name": "PATCH /auditoria/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"valor_nuevo\": \"Registro actualizado\"\n}"
+            },
+            "url": "{{base_url}}/auditoria/{{auditoria_id}}"
+          }
+        },
+        {
+          "name": "DELETE /auditoria/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/auditoria/{{auditoria_id}}"
+          }
+        }
+      ]
+    }
+  ]
+}

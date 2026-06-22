@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Link from 'next/link';
-import { categoriasApi } from '@/lib/api';
-import { CreateCategoriaDto } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { categoriasApi } from "@/lib/api";
+import type { CreateCategoriaDto } from "@/types/biblioteca";
 
 export default function CrearCategoriaPage() {
   const router = useRouter();
@@ -12,12 +12,12 @@ export default function CrearCategoriaPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<CreateCategoriaDto>({
-    nombre: '',
-    descripcion: '',
+    nombre: "",
+    descripcion: "",
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -32,16 +32,16 @@ export default function CrearCategoriaPage() {
     setError(null);
 
     if (!formData.nombre) {
-      setError('Por favor completa el nombre de la categoría');
+      setError("Por favor completa el nombre de la categoría");
       setLoading(false);
       return;
     }
 
     try {
       await categoriasApi.create(formData);
-      router.push('/libros');
+      router.push("/libros");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando categoría');
+      setError(err instanceof Error ? err.message : "Error creando categoría");
     } finally {
       setLoading(false);
     }
@@ -50,11 +50,16 @@ export default function CrearCategoriaPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/libros/crear" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/libros/crear"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Crear Libro
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Crear Categoría</h1>
-        <p className="text-slate-600 mt-1">Agrega una nueva categoría de libros</p>
+        <p className="text-slate-600 mt-1">
+          Agrega una nueva categoría de libros
+        </p>
       </div>
 
       <div className="bg-white rounded shadow p-6">
@@ -99,7 +104,7 @@ export default function CrearCategoriaPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Categoría'}
+              {loading ? "Creando..." : "Crear Categoría"}
             </button>
             <Link
               href="/libros/crear"

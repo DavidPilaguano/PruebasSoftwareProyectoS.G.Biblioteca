@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Link from 'next/link';
-import { editorialesApi } from '@/lib/api';
-import { CreateEditorialDto } from '@/types/biblioteca';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { editorialesApi } from "@/lib/api";
+import type { CreateEditorialDto } from "@/types/biblioteca";
 
 export default function CrearEditorialPage() {
   const router = useRouter();
@@ -12,13 +12,11 @@ export default function CrearEditorialPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<CreateEditorialDto>({
-    nombre: '',
-    pais: '',
+    nombre: "",
+    pais: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -32,16 +30,16 @@ export default function CrearEditorialPage() {
     setError(null);
 
     if (!formData.nombre) {
-      setError('Por favor completa el nombre de la editorial');
+      setError("Por favor completa el nombre de la editorial");
       setLoading(false);
       return;
     }
 
     try {
       await editorialesApi.create(formData);
-      router.push('/libros/crear');
+      router.push("/libros/crear");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creando editorial');
+      setError(err instanceof Error ? err.message : "Error creando editorial");
     } finally {
       setLoading(false);
     }
@@ -50,7 +48,10 @@ export default function CrearEditorialPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/libros/crear" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/libros/crear"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Crear Libro
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Crear Editorial</h1>
@@ -99,7 +100,7 @@ export default function CrearEditorialPage() {
               disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {loading ? 'Creando...' : 'Crear Editorial'}
+              {loading ? "Creando..." : "Crear Editorial"}
             </button>
             <Link
               href="/libros/crear"

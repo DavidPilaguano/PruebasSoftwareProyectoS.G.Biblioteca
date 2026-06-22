@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { prestamosApi } from '@/lib/api';
-import { Prestamo, UpdatePrestamoDto } from '@/types/biblioteca';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { prestamosApi } from "@/lib/api";
+import type { Prestamo, UpdatePrestamoDto } from "@/types/biblioteca";
 
 export default function EditarPrestamoPage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function EditarPrestamoPage() {
   const [prestamo, setPrestamo] = useState<Prestamo | null>(null);
 
   const [formData, setFormData] = useState<UpdatePrestamoDto>({
-    estado: 'ACTIVO',
+    estado: "ACTIVO",
     fecha_devolucion_real: undefined,
     fecha_devolucion_esperada: undefined,
   });
@@ -29,11 +29,15 @@ export default function EditarPrestamoPage() {
         setPrestamo(prestamoData);
         setFormData({
           estado: prestamoData.estado,
-          fecha_devolucion_real: prestamoData.fecha_devolucion_real || undefined,
-          fecha_devolucion_esperada: prestamoData.fecha_devolucion_esperada || undefined,
+          fecha_devolucion_real:
+            prestamoData.fecha_devolucion_real || undefined,
+          fecha_devolucion_esperada:
+            prestamoData.fecha_devolucion_esperada || undefined,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando préstamo');
+        setError(
+          err instanceof Error ? err.message : "Error cargando préstamo",
+        );
       } finally {
         setLoading(false);
       }
@@ -43,7 +47,7 @@ export default function EditarPrestamoPage() {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -59,9 +63,11 @@ export default function EditarPrestamoPage() {
 
     try {
       await prestamosApi.update(id, formData);
-      router.push('/prestamos');
+      router.push("/prestamos");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error actualizando préstamo');
+      setError(
+        err instanceof Error ? err.message : "Error actualizando préstamo",
+      );
     } finally {
       setSaving(false);
     }
@@ -72,13 +78,18 @@ export default function EditarPrestamoPage() {
   }
 
   if (!prestamo) {
-    return <div className="p-6 text-center text-red-600">Préstamo no encontrado</div>;
+    return (
+      <div className="p-6 text-center text-red-600">Préstamo no encontrado</div>
+    );
   }
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/prestamos" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/prestamos"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Préstamos
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Editar Préstamo</h1>
@@ -100,7 +111,11 @@ export default function EditarPrestamoPage() {
             <input
               type="text"
               disabled
-              value={prestamo.usuario ? `${prestamo.usuario.primer_nombre} ${prestamo.usuario.primer_apellido}` : 'No disponible'}
+              value={
+                prestamo.usuario
+                  ? `${prestamo.usuario.primer_nombre} ${prestamo.usuario.primer_apellido}`
+                  : "No disponible"
+              }
               className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600"
             />
           </div>
@@ -112,7 +127,7 @@ export default function EditarPrestamoPage() {
             <input
               type="text"
               disabled
-              value={prestamo.libro?.titulo || 'No disponible'}
+              value={prestamo.ejemplar?.libro?.titulo || "No disponible"}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600"
             />
           </div>
@@ -153,7 +168,7 @@ export default function EditarPrestamoPage() {
             <input
               type="date"
               name="fecha_devolucion_esperada"
-              value={formData.fecha_devolucion_esperada || ''}
+              value={formData.fecha_devolucion_esperada || ""}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -166,7 +181,7 @@ export default function EditarPrestamoPage() {
             <input
               type="date"
               name="fecha_devolucion_real"
-              value={formData.fecha_devolucion_real || ''}
+              value={formData.fecha_devolucion_real || ""}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -178,7 +193,7 @@ export default function EditarPrestamoPage() {
               disabled={saving}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
             <Link
               href="/prestamos"

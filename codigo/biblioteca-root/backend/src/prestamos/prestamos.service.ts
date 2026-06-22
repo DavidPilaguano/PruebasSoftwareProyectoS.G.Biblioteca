@@ -52,7 +52,22 @@ export class PrestamosService {
   async findOne(id: number) {
     const { data, error } = await this.supabase.client
       .from('prestamo')
-      .select('*')
+      .select(
+        `
+        *,
+        usuario (
+          primer_nombre,
+          primer_apellido,
+          cedula
+        ),
+        ejemplar (
+          codigo_barra,
+          libro (
+            titulo
+          )
+        )
+      `,
+      )
       .eq('id_prestamo', id)
       .single();
 

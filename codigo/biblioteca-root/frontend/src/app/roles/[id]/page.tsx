@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { rolesApi } from '@/lib/api';
-import { RolUsuario, UpdateRolUsuarioDto } from '@/types/biblioteca';
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { rolesApi } from "@/lib/api";
+import type { RolUsuario, UpdateRolUsuarioDto } from "@/types/biblioteca";
 
 export default function EditarRolPage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function EditarRolPage() {
   const [rol, setRol] = useState<RolUsuario | null>(null);
 
   const [formData, setFormData] = useState<UpdateRolUsuarioDto>({
-    nombre: '',
+    nombre: "",
     max_prestamos: 0,
     dias_prestamo: 0,
   });
@@ -33,7 +33,7 @@ export default function EditarRolPage() {
           dias_prestamo: rolData.dias_prestamo,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error cargando rol');
+        setError(err instanceof Error ? err.message : "Error cargando rol");
       } finally {
         setLoading(false);
       }
@@ -42,15 +42,14 @@ export default function EditarRolPage() {
     loadData();
   }, [id]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'max_prestamos' || name === 'dias_prestamo' 
-        ? parseInt(value) 
-        : value,
+      [name]:
+        name === "max_prestamos" || name === "dias_prestamo"
+          ? parseInt(value)
+          : value,
     }));
   };
 
@@ -61,9 +60,9 @@ export default function EditarRolPage() {
 
     try {
       await rolesApi.update(id, formData);
-      router.push('/roles');
+      router.push("/roles");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error actualizando rol');
+      setError(err instanceof Error ? err.message : "Error actualizando rol");
     } finally {
       setSaving(false);
     }
@@ -74,13 +73,18 @@ export default function EditarRolPage() {
   }
 
   if (!rol) {
-    return <div className="p-6 text-center text-red-600">Rol no encontrado</div>;
+    return (
+      <div className="p-6 text-center text-red-600">Rol no encontrado</div>
+    );
   }
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link href="/roles" className="text-blue-600 hover:underline mb-4 inline-block">
+        <Link
+          href="/roles"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
           ← Volver a Roles
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Editar Rol</h1>
@@ -144,7 +148,7 @@ export default function EditarRolPage() {
               disabled={saving}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
             <Link
               href="/roles"
