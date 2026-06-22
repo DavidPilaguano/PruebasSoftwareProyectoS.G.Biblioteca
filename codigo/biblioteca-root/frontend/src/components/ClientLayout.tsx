@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ClientLayout({
   children,
@@ -9,7 +10,16 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { loading } = useAuth();
   const isLoginPage = pathname === "/login";
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-slate-100 w-full flex items-center justify-center text-slate-600">
+        Cargando...
+      </main>
+    );
+  }
 
   if (isLoginPage) {
     return (

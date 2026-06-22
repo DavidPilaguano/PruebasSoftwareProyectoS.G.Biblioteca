@@ -37,6 +37,32 @@
               "raw": "{\n  \"username\": \"admin\",\n  \"password_hash\": \"123456\"\n}"
             },
             "url": "{{base_url}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Login correcto\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "  pm.expect(json.data).to.have.property(\"access_token\");",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.access_token) {",
+                  "  pm.environment.set(\"token\", json.data.access_token);",
+                  "  pm.environment.set(\"usuario_sistema_id\", String(json.data.user.id));",
+                  "  pm.environment.set(\"username\", json.data.user.username);",
+                  "  pm.environment.set(\"rol_sistema\", json.data.user.rol_sistema);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "auth": {
+            "type": "noauth"
           }
         }
       ]
@@ -75,7 +101,26 @@
               "raw": "{\n  \"nombre\": \"ESTUDIANTE\",\n  \"max_prestamos\": 3,\n  \"dias_prestamo\": 14\n}"
             },
             "url": "{{base_url}}/roles"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_rol) {",
+                  "  pm.environment.set(\"rol_id\", String(json.data.id_rol));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /roles/:id",
@@ -138,7 +183,26 @@
               "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"123456\",\n  \"primer_nombre\": \"Admin\",\n  \"segundo_nombre\": \"\",\n  \"primer_apellido\": \"Sistema\",\n  \"segundo_apellido\": \"\",\n  \"estado\": \"ACTIVO\",\n  \"rol_sistema\": \"ADMINISTRADOR\"\n}"
             },
             "url": "{{base_url}}/usuarios-sistema"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_usuario_sistema) {",
+                  "  pm.environment.set(\"usuario_sistema_id\", String(json.data.id_usuario_sistema));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /usuarios-sistema/:id",
@@ -201,7 +265,26 @@
               "raw": "{\n  \"cedula\": \"1723456789\",\n  \"codigo_institucional\": \"U001\",\n  \"primer_nombre\": \"Juan\",\n  \"segundo_nombre\": \"Carlos\",\n  \"primer_apellido\": \"Perez\",\n  \"segundo_apellido\": \"Lopez\",\n  \"correo\": \"juan.perez@test.com\",\n  \"telefono\": \"0999999999\",\n  \"estado\": \"ACTIVO\",\n  \"id_rol\": 1\n}"
             },
             "url": "{{base_url}}/usuarios"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_usuario) {",
+                  "  pm.environment.set(\"usuario_id\", String(json.data.id_usuario));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /usuarios/:id",
@@ -267,7 +350,26 @@
                   "raw": "{\n  \"nombre\": \"Programacion\",\n  \"descripcion\": \"Libros de desarrollo de software\"\n}"
                 },
                 "url": "{{base_url}}/categorias"
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "",
+                      "pm.test(\"Respuesta exitosa\", function () {",
+                      "  pm.expect(json.success).to.eql(true);",
+                      "});",
+                      "",
+                      "if (json.success && json.data?.id_categoria) {",
+                      "  pm.environment.set(\"categoria_id\", String(json.data.id_categoria));",
+                      "}"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "PATCH /categorias/:id",
@@ -330,7 +432,26 @@
                   "raw": "{\n  \"nombre\": \"Pearson\",\n  \"pais\": \"Estados Unidos\"\n}"
                 },
                 "url": "{{base_url}}/editoriales"
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "",
+                      "pm.test(\"Respuesta exitosa\", function () {",
+                      "  pm.expect(json.success).to.eql(true);",
+                      "});",
+                      "",
+                      "if (json.success && json.data?.id_editorial) {",
+                      "  pm.environment.set(\"editorial_id\", String(json.data.id_editorial));",
+                      "}"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "PATCH /editoriales/:id",
@@ -393,7 +514,26 @@
                   "raw": "{\n  \"primer_nombre\": \"Robert\",\n  \"segundo_nombre\": \"\",\n  \"primer_apellido\": \"Martin\",\n  \"segundo_apellido\": \"\",\n  \"nacionalidad\": \"Estadounidense\"\n}"
                 },
                 "url": "{{base_url}}/autores"
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "",
+                      "pm.test(\"Respuesta exitosa\", function () {",
+                      "  pm.expect(json.success).to.eql(true);",
+                      "});",
+                      "",
+                      "if (json.success && json.data?.id_autor) {",
+                      "  pm.environment.set(\"autor_id\", String(json.data.id_autor));",
+                      "}"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "PATCH /autores/:id",
@@ -466,7 +606,26 @@
               "raw": "{\n  \"isbn\": \"9780132350884\",\n  \"titulo\": \"Clean Code\",\n  \"anio_publicacion\": 2008,\n  \"descripcion\": \"Libro sobre buenas practicas de programacion\",\n  \"id_categoria\": 1,\n  \"id_editorial\": 1\n}"
             },
             "url": "{{base_url}}/libros"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_libro) {",
+                  "  pm.environment.set(\"libro_id\", String(json.data.id_libro));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /libros/:id",
@@ -529,7 +688,26 @@
               "raw": "{\n  \"codigo_barra\": \"LIB-001\",\n  \"id_libro\": \"1\",\n  \"estado\": \"DISPONIBLE\",\n  \"ubicacion_fisica\": \"Estante A1\",\n  \"fecha_adquisicion\": \"2026-06-22\"\n}"
             },
             "url": "{{base_url}}/ejemplares"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_ejemplar) {",
+                  "  pm.environment.set(\"ejemplar_id\", String(json.data.id_ejemplar));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /ejemplares/:id",
@@ -592,7 +770,26 @@
               "raw": "{\n  \"id_usuario\": 1,\n  \"id_usuario_sistema\": 1,\n  \"id_ejemplar\": 1,\n  \"estado\": \"ACTIVO\",\n  \"fecha_devolucion_esperada\": \"2026-07-06\"\n}"
             },
             "url": "{{base_url}}/prestamos"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_prestamo) {",
+                  "  pm.environment.set(\"prestamo_id\", String(json.data.id_prestamo));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /prestamos/:id",
@@ -655,7 +852,26 @@
               "raw": "{\n  \"tabla_afectada\": \"libro\",\n  \"id_registro\": 1,\n  \"accion\": \"INSERT\",\n  \"usuario_sistema\": \"admin\",\n  \"valor_anterior\": null,\n  \"valor_nuevo\": \"Registro creado\"\n}"
             },
             "url": "{{base_url}}/auditoria"
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test(\"Respuesta exitosa\", function () {",
+                  "  pm.expect(json.success).to.eql(true);",
+                  "});",
+                  "",
+                  "if (json.success && json.data?.id_auditoria) {",
+                  "  pm.environment.set(\"auditoria_id\", String(json.data.id_auditoria));",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "PATCH /auditoria/:id",
@@ -684,5 +900,15 @@
         }
       ]
     }
-  ]
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
 }

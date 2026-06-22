@@ -11,6 +11,22 @@ import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 export class UsuariosService {
   constructor(private readonly supabase: SupabaseService) {}
 
+  private getDatabaseErrorMessage(message: string): string {
+    if (message.includes('usuario_cedula_key')) {
+      return 'Ya existe un usuario registrado con esa cedula';
+    }
+
+    if (message.includes('usuario_codigo_institucional_key')) {
+      return 'Ya existe un usuario registrado con ese codigo institucional';
+    }
+
+    if (message.includes('usuario_correo_key')) {
+      return 'Ya existe un usuario registrado con ese correo electronico';
+    }
+
+    return message;
+  }
+
   async create(dto: CreateUsuarioDto) {
     if (!dto.id_rol) {
       throw new BadRequestException('id_rol es requerido');
@@ -21,7 +37,11 @@ export class UsuariosService {
       .select('*')
       .single();
 
-    if (error) throw new BadRequestException(error.message);
+    if (error) {
+      throw new BadRequestException(
+        this.getDatabaseErrorMessage(error.message),
+      );
+    }
     return data;
   }
 
@@ -53,7 +73,11 @@ export class UsuariosService {
       .select('*')
       .single();
 
-    if (error) throw new BadRequestException(error.message);
+    if (error) {
+      throw new BadRequestException(
+        this.getDatabaseErrorMessage(error.message),
+      );
+    }
     return data;
   }
 

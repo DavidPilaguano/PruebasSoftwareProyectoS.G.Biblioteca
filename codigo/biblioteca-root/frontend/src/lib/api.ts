@@ -1,10 +1,23 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export const apiCall = async (
+interface ApiEnvelope<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+const isApiEnvelope = (value: unknown): value is ApiEnvelope<unknown> =>
+  typeof value === "object" &&
+  value !== null &&
+  "success" in value &&
+  "message" in value &&
+  "data" in value;
+
+export const apiCall = async <T = any>(
   endpoint: string,
   method: "GET" | "POST" | "PATCH" | "DELETE" = "GET",
   body?: unknown,
-) => {
+): Promise<T> => {
   const options: RequestInit = {
     method,
     headers: {
@@ -23,7 +36,8 @@ export const apiCall = async (
     throw new Error(error.message || "Error en la solicitud");
   }
 
-  return response.json();
+  const result: unknown = await response.json();
+  return (isApiEnvelope(result) ? result.data : result) as T;
 };
 
 // Libros

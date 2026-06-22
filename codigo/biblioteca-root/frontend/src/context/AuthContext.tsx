@@ -35,14 +35,19 @@ const getStoredUser = (): User | null => {
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => getStoredUser());
-  const [loading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     // Al cargar la app, verificamos si hay sesión guardada en el navegador
-    if (user) {
+    const sessionUser = getStoredUser();
+
+    setUser(sessionUser);
+    setLoading(false);
+
+    if (sessionUser) {
       // Si está autenticado y trata de entrar al login, lo mandamos al dashboard
       if (pathname === "/login") {
         router.push("/");
@@ -53,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push("/login");
       }
     }
-  }, [pathname, router, user]);
+  }, [pathname, router]);
 
   const login = async (username: string, password_hash: string) => {
     const { authApi } = await import("@/lib/api");
