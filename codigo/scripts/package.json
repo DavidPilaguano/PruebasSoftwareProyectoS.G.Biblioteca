@@ -1,0 +1,13 @@
+{
+  "name": "sql-persistence",
+  "version": "1.0.0",
+  "description": "Script para extraer datos de Supabase y generar archivo SQL",
+  "main": "sql_persistence.js",
+  "scripts": {
+    "start": "node sql_persistence.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.4.1"
+  }
+}
