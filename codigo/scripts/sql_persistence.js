@@ -82,7 +82,7 @@ async function generateSqlSeed() {
         const columns = Object.keys(row).map(c => `"${c}"`).join(', ');
         const values = Object.values(row).map(escapeSqlValue).join(', ');
         
-        sqlScript += `INSERT INTO public."${table}" (${columns}) VALUES (${values});\n`;
+        sqlScript += `INSERT INTO public."${table}" (${columns}) OVERRIDING SYSTEM VALUE VALUES (${values});\n`;
       }
       sqlScript += '\n';
       console.log(`   ✅ ${data.length} registros extraídos.`);
