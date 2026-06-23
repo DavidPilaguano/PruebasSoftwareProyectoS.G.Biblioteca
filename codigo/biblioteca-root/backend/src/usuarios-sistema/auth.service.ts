@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,14 @@ export class AuthService {
     // Comparamos la contraseña en texto plano con el hash de la Base de Datos
     // NOTA: Si metiste contraseñas en texto plano para probar, cambia esto por: if (password_plain !== usuario.password_hash)
     const passwordHash = String(usuario.password_hash);
+    const sha256Password = crypto
+      .createHash('sha256')
+      .update(password_plain)
+      .digest('hex');
     const isPasswordValid =
       (await bcrypt.compare(password_plain, passwordHash).catch(() => false)) ||
-      password_plain === passwordHash;
+      password_plain === passwordHash ||
+      sha256Password === passwordHash;
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciales incorrectas');

@@ -46,6 +46,53 @@ describe('UsuariosSistemaService', () => {
       const result = await service.create(dto);
       expect(result.password_hash).toBeUndefined();
     });
+
+    it('should reject invalid role', async () => {
+      await expect(
+        service.create({
+          username: 'bad.role',
+          password: '123456',
+          primer_nombre: 'Bad',
+          primer_apellido: 'Role',
+          rol_sistema: 'OTRO',
+        } as any),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should reject missing password', async () => {
+      await expect(
+        service.create({
+          username: 'sin.password',
+          primer_nombre: 'Sin',
+          primer_apellido: 'Password',
+          rol_sistema: 'BIBLIOTECARIO',
+        } as any),
+      ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return users without password hash', async () => {
+      mockSupabaseClient.select.mockResolvedValueOnce({
+        data: [{ id_usuario_sistema: 1, username: 'admin', password_hash: 'x' }],
+        error: null,
+      });
+
+      const result = await service.findAll();
+
+      expect(result).toEqual([
+        { id_usuario_sistema: 1, username: 'admin', password_hash: undefined },
+      ]);
+    });
+
+    it('should throw BadRequestException when findAll fails', async () => {
+      mockSupabaseClient.select.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Error al listar' },
+      });
+
+      await expect(service.findAll()).rejects.toThrow(BadRequestException);
+    });
   });
 
   describe('findOne', () => {
@@ -91,6 +138,77 @@ describe('UsuariosSistemaService', () => {
         error: { message: 'Empty' },
       });
       await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('update', () => {
+    it('should update user and hide password hash', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: {
+          id_usuario_sistema: 1,
+          username: 'admin',
+          primer_nombre: 'Admin',
+          password_hash: 'secret',
+        },
+        error: null,
+      });
+
+      const result = await service.update(1, {
+        username: 'no-debe-cambiar',
+        primer_nombre: 'Admin',
+        password: 'nueva-clave',
+      } as any);
+
+      expect(mockSupabaseClient.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          primer_nombre: 'Admin',
+          password_hash: expect.any(String),
+        }),
+      );
+      expect(result.password_hash).toBeUndefined();
+    });
+
+    it('should call findOne when update payload is empty after cleanup', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: { id_usuario_sistema: 1, username: 'admin', password_hash: 'x' },
+        error: null,
+      });
+
+      const result = await service.update(1, {
+        username: 'admin',
+        password_hash: '',
+      } as any);
+
+      expect(result.password_hash).toBeUndefined();
+      expect(mockSupabaseClient.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when update fails', async () => {
+      jest.spyOn(console, 'error').mockImplementationOnce(() => undefined);
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Error update' },
+      });
+
+      await expect(
+        service.update(1, { primer_nombre: 'Error' } as any),
+      ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove a user', async () => {
+      mockSupabaseClient.eq.mockResolvedValueOnce({ error: null });
+
+      await expect(service.remove(1)).resolves.toEqual({ deleted: true });
+    });
+
+    it('should throw BadRequestException when remove fails', async () => {
+      mockSupabaseClient.eq.mockResolvedValueOnce({
+        error: { message: 'Error remove' },
+      });
+
+      await expect(service.remove(1)).rejects.toThrow(BadRequestException);
     });
   });
 });
