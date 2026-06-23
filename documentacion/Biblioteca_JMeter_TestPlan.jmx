@@ -72,8 +72,8 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;username&quot;: &quot;dpilaguano&quot;,&#xd;
-  &quot;password_hash&quot;: &quot;hash_admin&quot;&#xd;
+  &quot;username&quot;: &quot;sortega&quot;,&#xd;
+  &quot;password_hash&quot;: &quot;hash_admin2&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -81,14 +81,14 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Guardar token">
-            <stringProp name="JSONPostProcessor.referenceNames">token,usuario_sistema_id</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.access_token,$.data.user.id</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1,1</stringProp>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Guardar token" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.access_token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND,1</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Login exitoso">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Login exitoso" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="-547797305">&quot;success&quot;:true</stringProp>
             </collectionProp>
@@ -98,8 +98,14 @@
             <intProp name="Assertion.test_type">2</intProp>
           </ResponseAssertion>
           <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="id_usuario_sistema" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">usuario_sistema_id</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.user.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 - GET roles" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="02 - GET roles">
           <stringProp name="HTTPSampler.path">/roles</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
@@ -108,7 +114,10 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - POST rol prueba" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="03 - POST rol prueba">
+          <stringProp name="HTTPSampler.domain">${host}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
           <stringProp name="HTTPSampler.path">/roles</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -117,9 +126,9 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;nombre&quot;: &quot;JMETER_${__time()}&quot;,&#xd;
-  &quot;max_prestamos&quot;: 3,&#xd;
-  &quot;dias_prestamo&quot;: 14&#xd;
+  &quot;nombre&quot;: &quot;JMETER_${__time(yyyyMMddHHmmss)}&quot;,&#xd;
+  &quot;max_prestamos&quot;: 2,&#xd;
+  &quot;dias_prestamo&quot;: 11&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -135,7 +144,7 @@
           </JSONPostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - POST usuario prueba" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="04 - POST usuario prueba">
           <stringProp name="HTTPSampler.path">/usuarios</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -144,13 +153,13 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;cedula&quot;: &quot;${__time()}&quot;,&#xd;
-  &quot;codigo_institucional&quot;: &quot;JM${__time()}&quot;,&#xd;
+  &quot;cedula&quot;: &quot;17${__RandomString(8,0123456789,)}&quot;,&#xd;
+  &quot;codigo_institucional&quot;: &quot;JM${__time(yyyyMMddHHmmss)}&quot;,&#xd;
   &quot;primer_nombre&quot;: &quot;Usuario&quot;,&#xd;
   &quot;segundo_nombre&quot;: &quot;JMeter&quot;,&#xd;
   &quot;primer_apellido&quot;: &quot;Prueba&quot;,&#xd;
   &quot;segundo_apellido&quot;: &quot;API&quot;,&#xd;
-  &quot;correo&quot;: &quot;jmeter_${__time()}@test.com&quot;,&#xd;
+  &quot;correo&quot;: &quot;jmeter_${__time(yyyyMMddHHmmss)}@test.com&quot;,&#xd;
   &quot;telefono&quot;: &quot;0999999999&quot;,&#xd;
   &quot;estado&quot;: &quot;ACTIVO&quot;,&#xd;
   &quot;id_rol&quot;: ${rol_id}&#xd;
@@ -161,7 +170,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Guardar usuario_id">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Guardar usuario_id" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">usuario_id</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id_usuario</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -178,7 +187,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;nombre&quot;: &quot;Categoria JMeter ${__time()}&quot;,&#xd;
+  &quot;nombre&quot;: &quot;${__time(yyyyMMddHHmmss)}&quot;,&#xd;
   &quot;descripcion&quot;: &quot;Categoria creada desde JMeter&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
@@ -204,7 +213,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;nombre&quot;: &quot;Editorial JMeter ${__time()}&quot;,&#xd;
+  &quot;nombre&quot;: &quot;Editorial JMeter ${__time(yyyyMMddHHmmss)}&quot;,&#xd;
   &quot;pais&quot;: &quot;Ecuador&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
@@ -213,7 +222,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Guardar editorial_id">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Guardar editorial_id" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">editorial_id</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id_editorial</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -221,7 +230,7 @@
           </JSONPostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="07 - POST libro prueba">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="07 - POST libro prueba" enabled="true">
           <stringProp name="HTTPSampler.path">/libros</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -230,7 +239,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;isbn&quot;: &quot;JM-${__time()}&quot;,&#xd;
+  &quot;isbn&quot;: &quot;Libro-JMeter ${__time(yyyyMMddHHmmss)}&quot;,&#xd;
   &quot;titulo&quot;: &quot;Libro JMeter&quot;,&#xd;
   &quot;anio_publicacion&quot;: 2026,&#xd;
   &quot;descripcion&quot;: &quot;Libro creado desde JMeter&quot;,&#xd;
@@ -260,7 +269,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;codigo_barra&quot;: &quot;JM-${__time()}&quot;,&#xd;
+  &quot;codigo_barra&quot;: &quot;JM-${__time(yyyyMMddHHmmss)}&quot;,&#xd;
   &quot;id_libro&quot;: &quot;${libro_id}&quot;,&#xd;
   &quot;estado&quot;: &quot;DISPONIBLE&quot;,&#xd;
   &quot;ubicacion_fisica&quot;: &quot;Estante JMeter&quot;,&#xd;
