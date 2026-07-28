@@ -29,10 +29,14 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       title={darkMode ? "Cambiar a modo claro" : "Cambiar a modo noche"}
       aria-label={darkMode ? "Cambiar a modo claro" : "Cambiar a modo noche"}
-      className="theme-toggle"
+      className={`theme-toggle ${darkMode ? "theme-toggle-dark" : ""}`}
     >
-      <span className="theme-toggle__icon">{darkMode ? "Sol" : "Luna"}</span>
-      <span>{darkMode ? "Claro" : "Noche"}</span>
+      <span className="theme-toggle-track">
+        <span className="theme-toggle-thumb" />
+      </span>
+      <span className="theme-toggle-label">
+        {darkMode ? "Modo claro" : "Modo noche"}
+      </span>
     </button>
   );
 }

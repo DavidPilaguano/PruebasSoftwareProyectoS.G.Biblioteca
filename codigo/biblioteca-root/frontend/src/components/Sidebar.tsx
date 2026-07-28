@@ -138,7 +138,7 @@ export default function Sidebar() {
         )}
       </div>
 
-      <div className="md:hidden pt-[78px] w-full" />
+      <div className="mobile-spacer md:hidden pt-[78px] w-full" />
     </>
   );
 }
