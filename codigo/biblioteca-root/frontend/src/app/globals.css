@@ -432,6 +432,49 @@ body {
   top: 0;
 }
 
+.metric-row {
+  align-items: center;
+  color: var(--muted);
+  display: flex;
+  font-size: 0.88rem;
+  font-weight: 750;
+  justify-content: space-between;
+  margin-top: 1.1rem;
+}
+
+.metric-row strong {
+  color: var(--foreground);
+}
+
+.metric-bar {
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  height: 0.7rem;
+  margin-top: 0.45rem;
+  overflow: hidden;
+}
+
+.metric-bar span {
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  max-width: 100%;
+}
+
+.metric-bar-accent span {
+  background: linear-gradient(90deg, #f59e0b, var(--brand));
+}
+
+.metric-big {
+  color: var(--foreground);
+  font-size: 3.25rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-top: 1.35rem;
+}
+
 .mobile-header {
   align-items: center;
   background: color-mix(in srgb, var(--surface) 96%, transparent);

@@ -3,6 +3,7 @@ import {
   cleanup,
   render,
   renderPagina,
+  screen,
   waitFor,
 } from "./support/app-test-utils";
 
@@ -11,6 +12,7 @@ import DashboardPage from "@/app/page";
 describe("Pagina dashboard", () => {
   test("renderiza la pagina", async () => {
     await renderPagina(DashboardPage, /Dashboard/i);
+    await waitFor(() => expect(screen.getAllByText("100%")).toHaveLength(2));
   });
 
   test("cubre error al cargar datos del dashboard", async () => {
@@ -23,5 +25,25 @@ describe("Pagina dashboard", () => {
     await waitFor(() => expect(consoleError).toHaveBeenCalled());
     cleanup();
     consoleError.mockRestore();
+  });
+
+  test("calcula metricas en cero sin datos de gestion", async () => {
+    const api = require("@/lib/api");
+
+    api.prestamosApi.getAll.mockResolvedValueOnce([]);
+    api.librosApi.getDashboardStats.mockResolvedValueOnce({
+      libros: 0,
+      usuarios: 0,
+      ejemplares: 0,
+    });
+    api.ejemplaresApi.getAll.mockResolvedValueOnce([]);
+    api.usuariosApi.getAll.mockResolvedValueOnce([]);
+    api.librosApi.getAll.mockResolvedValueOnce([]);
+
+    render(React.createElement(DashboardPage));
+
+    await waitFor(() => expect(screen.getByText("0.0")).toBeInTheDocument());
+    expect(screen.getAllByText("0%")).toHaveLength(3);
+    cleanup();
   });
 });
