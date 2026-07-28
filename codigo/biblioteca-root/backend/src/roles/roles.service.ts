@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdateRolDto } from './dto/update-rol.dto';
 
 @Injectable()
 export class RolesService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   async create(dto: CreateRolDto) {
     if (!dto.max_prestamos || !dto.dias_prestamo) {

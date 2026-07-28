@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ejemplaresApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type { Ejemplar } from "@/types/biblioteca";
 
 export default function EjemplaresPage() {
@@ -17,7 +18,7 @@ export default function EjemplaresPage() {
         setEjemplares(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando ejemplares",
+          errorMessage(err, "Error cargando ejemplares"),
         );
       } finally {
         setLoading(false);
@@ -36,7 +37,7 @@ export default function EjemplaresPage() {
       await ejemplaresApi.delete(id);
       setEjemplares(ejemplares.filter((e) => e.id_ejemplar !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error eliminando ejemplar");
+      alert(errorMessage(err, "Error eliminando ejemplar"));
     }
   };
 
@@ -98,7 +99,7 @@ export default function EjemplaresPage() {
                   className="border-b hover:bg-slate-50"
                 >
                   <td className="px-6 py-3 text-sm text-slate-900">
-                    {ejemplar.codigo_barra || "-"}
+                    {textOr(ejemplar.codigo_barra, "-")}
                   </td>
                   <td className="px-6 py-3 text-sm">
                     <span
@@ -114,7 +115,7 @@ export default function EjemplaresPage() {
                     </span>
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
-                    {ejemplar.ubicacion_fisica || "-"}
+                    {textOr(ejemplar.ubicacion_fisica, "-")}
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     {ejemplar.fecha_adquisicion

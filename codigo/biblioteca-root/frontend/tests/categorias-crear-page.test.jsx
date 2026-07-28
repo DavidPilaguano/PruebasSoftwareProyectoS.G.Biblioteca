@@ -31,4 +31,17 @@ describe("Pagina crear categoria", () => {
 
     expect(screen.getByText(/Por favor completa/i)).toBeInTheDocument();
   });
+
+  test("muestra error al crear categoria", async () => {
+    const api = require("@/lib/api");
+    const view = await renderPagina(CrearCategoriaPage, /Crear Categor/i);
+
+    api.categoriasApi.create.mockRejectedValueOnce(new Error("Error creando categoria"));
+    cambiar(view.container, "nombre", "Programacion");
+    enviar(view.container);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error creando categoria")).toBeInTheDocument(),
+    );
+  });
 });

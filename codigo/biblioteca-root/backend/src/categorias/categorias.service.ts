@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 
 @Injectable()
 export class CategoriasService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   async create(dto: CreateCategoriaDto) {
     if (!dto.nombre) {

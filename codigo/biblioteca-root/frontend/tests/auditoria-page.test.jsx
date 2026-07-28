@@ -10,6 +10,7 @@ import AuditoriaPage from "@/app/auditoria/page";
 describe("Pagina auditoria", () => {
   test("renderiza la pagina", async () => {
     await renderPagina(AuditoriaPage, /Auditor/i);
+    await waitFor(() => expect(screen.getByText("INSERT")).toBeInTheDocument());
   });
 
   test("muestra acciones alternas", async () => {

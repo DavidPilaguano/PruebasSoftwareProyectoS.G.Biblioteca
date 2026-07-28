@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usuariosApi, rolesApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type { Usuario, UpdateUsuarioDto, RolUsuario } from "@/types/biblioteca";
 
 export default function EditarUsuarioPage() {
@@ -40,19 +41,19 @@ export default function EditarUsuarioPage() {
         setUsuario(usuarioData);
         setRoles(rolesData);
         setFormData({
-          cedula: usuarioData.cedula || "",
+          cedula: textOr(usuarioData.cedula, ""),
           codigo_institucional: usuarioData.codigo_institucional,
           primer_nombre: usuarioData.primer_nombre,
-          segundo_nombre: usuarioData.segundo_nombre || "",
+          segundo_nombre: textOr(usuarioData.segundo_nombre, ""),
           primer_apellido: usuarioData.primer_apellido,
-          segundo_apellido: usuarioData.segundo_apellido || "",
+          segundo_apellido: textOr(usuarioData.segundo_apellido, ""),
           correo: usuarioData.correo,
-          telefono: usuarioData.telefono || "",
+          telefono: textOr(usuarioData.telefono, ""),
           estado: usuarioData.estado,
           id_rol: usuarioData.id_rol,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando usuario");
+        setError(errorMessage(err, "Error cargando usuario"));
       } finally {
         setLoading(false);
       }
@@ -81,7 +82,7 @@ export default function EditarUsuarioPage() {
       router.push("/usuarios");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error actualizando usuario",
+        errorMessage(err, "Error actualizando usuario"),
       );
     } finally {
       setSaving(false);

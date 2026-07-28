@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { categoriasApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateCategoriaDto } from "@/types/biblioteca";
 
 export default function CrearCategoriaPage() {
@@ -41,7 +42,7 @@ export default function CrearCategoriaPage() {
       await categoriasApi.create(formData);
       router.push("/libros");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando categoría");
+      setError(errorMessage(err, "Error creando categoría"));
     } finally {
       setLoading(false);
     }

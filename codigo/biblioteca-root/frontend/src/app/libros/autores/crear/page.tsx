@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { autoresApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateAutorDto } from "@/types/biblioteca";
 
 export default function CrearAutorPage() {
@@ -42,7 +43,7 @@ export default function CrearAutorPage() {
       await autoresApi.create(formData);
       router.push("/libros/crear");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando autor");
+      setError(errorMessage(err, "Error creando autor"));
     } finally {
       setLoading(false);
     }

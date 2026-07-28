@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { librosApi, categoriasApi, editorialesApi } from "@/lib/api";
+import { errorMessage, numberOr } from "@/lib/ui-helpers";
 import type {
   Libro,
   UpdateLibroDto,
@@ -52,7 +53,7 @@ export default function EditarLibroPage() {
           id_editorial: libroData.id_editorial,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando libro");
+        setError(errorMessage(err, "Error cargando libro"));
       } finally {
         setLoading(false);
       }
@@ -87,7 +88,7 @@ export default function EditarLibroPage() {
       await librosApi.update(id, formData);
       router.push("/libros");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error actualizando libro");
+      setError(errorMessage(err, "Error actualizando libro"));
     } finally {
       setSaving(false);
     }
@@ -171,7 +172,7 @@ export default function EditarLibroPage() {
             </label>
             <select
               name="id_categoria"
-              value={formData.id_categoria || 0}
+              value={numberOr(formData.id_categoria, 0)}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -190,7 +191,7 @@ export default function EditarLibroPage() {
             </label>
             <select
               name="id_editorial"
-              value={formData.id_editorial || 0}
+              value={numberOr(formData.id_editorial, 0)}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >

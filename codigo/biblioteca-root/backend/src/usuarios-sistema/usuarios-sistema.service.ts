@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -10,7 +11,11 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class UsuariosSistemaService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   /**
    * Genera un hash SHA-256 para proteger la contraseña

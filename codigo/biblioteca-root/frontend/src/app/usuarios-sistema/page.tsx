@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usuariosSistemaApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { UsuarioSistema } from "@/types/biblioteca";
 
 export default function UsuariosSistemaPage() {
@@ -17,7 +18,7 @@ export default function UsuariosSistemaPage() {
         setUsuarios(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando usuarios",
+          errorMessage(err, "Error cargando usuarios"),
         );
       } finally {
         setLoading(false);
@@ -36,7 +37,7 @@ export default function UsuariosSistemaPage() {
       await usuariosSistemaApi.delete(id);
       setUsuarios(usuarios.filter((u) => u.id_usuario_sistema !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error eliminando usuario");
+      alert(errorMessage(err, "Error eliminando usuario"));
     }
   };
 

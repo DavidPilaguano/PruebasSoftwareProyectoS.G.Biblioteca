@@ -31,6 +31,12 @@ describe('EditorialesService', () => {
   });
 
   describe('create', () => {
+    it('should throw BadRequestException when name is missing', async () => {
+      await expect(service.create({} as any)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
     it('should create an editorial successfully', async () => {
       const dto = { nombre: 'Editorial Nueva' };
       mockSupabaseClient.single.mockResolvedValueOnce({

@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 
 @Injectable()
 export class UsuariosService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   private getDatabaseErrorMessage(message: string): string {
     if (message.includes('usuario_cedula_key')) {

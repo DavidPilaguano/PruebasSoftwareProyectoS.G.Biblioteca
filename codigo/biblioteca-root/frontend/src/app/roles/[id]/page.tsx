@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { rolesApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { RolUsuario, UpdateRolUsuarioDto } from "@/types/biblioteca";
 
 export default function EditarRolPage() {
@@ -33,7 +34,7 @@ export default function EditarRolPage() {
           dias_prestamo: rolData.dias_prestamo,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando rol");
+        setError(errorMessage(err, "Error cargando rol"));
       } finally {
         setLoading(false);
       }
@@ -62,7 +63,7 @@ export default function EditarRolPage() {
       await rolesApi.update(id, formData);
       router.push("/roles");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error actualizando rol");
+      setError(errorMessage(err, "Error actualizando rol"));
     } finally {
       setSaving(false);
     }

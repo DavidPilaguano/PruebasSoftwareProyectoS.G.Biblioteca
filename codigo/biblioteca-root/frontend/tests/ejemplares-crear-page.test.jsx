@@ -32,4 +32,29 @@ describe("Pagina crear ejemplar", () => {
 
     expect(screen.getByText("Por favor selecciona un libro")).toBeInTheDocument();
   });
+
+  test("muestra error al cargar libros", async () => {
+    const api = require("@/lib/api");
+
+    api.librosApi.getAll.mockRejectedValueOnce(new Error("Error cargando libros"));
+    await renderPagina(CrearEjemplarPage, /Crear Ejemplar/i);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error cargando libros")).toBeInTheDocument(),
+    );
+  });
+
+  test("muestra error al crear ejemplar", async () => {
+    const api = require("@/lib/api");
+    const view = await renderPagina(CrearEjemplarPage, /Crear Ejemplar/i);
+
+    api.ejemplaresApi.create.mockRejectedValueOnce(new Error("Error creando ejemplar"));
+    cambiar(view.container, "id_libro", "1");
+    cambiar(view.container, "codigo_barra", "BC-002");
+    enviar(view.container);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error creando ejemplar")).toBeInTheDocument(),
+    );
+  });
 });

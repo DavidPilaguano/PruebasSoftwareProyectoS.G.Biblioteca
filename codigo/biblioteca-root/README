@@ -232,6 +232,43 @@ npm run test:e2e
 npm run test:cov
 ```
 
+Frontend - Pruebas:
+```bash
+npm run test
+npm run coverage
+npm run build
+```
+
+Pruebas de carga con k6:
+```bash
+cd codigo/biblioteca-root
+k6 run k6/smoke.js
+k6 run -e BASE_URL=http://localhost:3001 k6/api-read.js
+```
+
+## CI/CD con GitHub Actions y Vercel
+
+Se agrego el workflow `.github/workflows/ci-cd.yml`.
+
+El pipeline ejecuta:
+- Pruebas unitarias y build del backend.
+- Pruebas y build del frontend.
+- Smoke test de performance con k6 si existen secretos de Supabase.
+- Despliegue del frontend a Vercel en pushes a `main` si existe `VERCEL_TOKEN`.
+
+Secretos recomendados en GitHub Actions:
+- `SUPABASE_URL`
+- `SUPABASE_KEY`
+- `JWT_SECRET`
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+Variables recomendadas en GitHub Actions o Vercel:
+- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
 Frontend - Linting:
 ```bash
 npm run lint

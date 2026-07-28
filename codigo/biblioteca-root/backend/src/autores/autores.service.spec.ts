@@ -31,6 +31,12 @@ describe('AutoresService', () => {
   });
 
   describe('create', () => {
+    it('should throw BadRequestException when name data is missing', async () => {
+      await expect(service.create({} as any)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
     it('should create an author successfully', async () => {
       // Usamos los campos correctos que pide tu servicio
       const dto = { primer_nombre: 'Gabriel', primer_apellido: 'García' };
@@ -79,6 +85,14 @@ describe('AutoresService', () => {
         error: { message: 'Not found' },
       });
       await expect(service.findOne(99)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw BadRequestException when data exists with error', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: { id_autor: 99 },
+        error: { message: 'Lectura parcial fallida' },
+      });
+      await expect(service.findOne(99)).rejects.toThrow(BadRequestException);
     });
   });
 

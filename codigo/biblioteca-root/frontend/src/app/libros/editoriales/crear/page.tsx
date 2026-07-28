@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { editorialesApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateEditorialDto } from "@/types/biblioteca";
 
 export default function CrearEditorialPage() {
@@ -39,7 +40,7 @@ export default function CrearEditorialPage() {
       await editorialesApi.create(formData);
       router.push("/libros/crear");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando editorial");
+      setError(errorMessage(err, "Error creando editorial"));
     } finally {
       setLoading(false);
     }

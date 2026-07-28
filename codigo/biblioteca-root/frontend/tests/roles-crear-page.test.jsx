@@ -18,6 +18,7 @@ describe("Pagina crear rol", () => {
     const view = await renderPagina(CrearRolPage, /Crear Rol/i);
 
     cambiar(view.container, "nombre", "DOCENTE");
+    cambiar(view.container, "max_prestamos", "7");
     enviar(view.container);
 
     await waitFor(() => expect(api.rolesApi.create).toHaveBeenCalled());
@@ -29,5 +30,18 @@ describe("Pagina crear rol", () => {
     enviar(view.container);
 
     expect(screen.getByText(/Por favor completa/i)).toBeInTheDocument();
+  });
+
+  test("muestra error al crear rol", async () => {
+    const api = require("@/lib/api");
+    const view = await renderPagina(CrearRolPage, /Crear Rol/i);
+
+    api.rolesApi.create.mockRejectedValueOnce(new Error("Error creando rol"));
+    cambiar(view.container, "nombre", "DOCENTE");
+    enviar(view.container);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error creando rol")).toBeInTheDocument(),
+    );
   });
 });

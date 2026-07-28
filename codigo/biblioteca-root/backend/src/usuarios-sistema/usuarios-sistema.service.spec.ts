@@ -69,6 +69,23 @@ describe('UsuariosSistemaService', () => {
         } as any),
       ).rejects.toThrow(BadRequestException);
     });
+
+    it('should throw BadRequestException when create fails in database', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Error creando usuario sistema' },
+      });
+
+      await expect(
+        service.create({
+          username: 'fallo.db',
+          password: '123456',
+          primer_nombre: 'Fallo',
+          primer_apellido: 'DB',
+          rol_sistema: 'BIBLIOTECARIO',
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
   });
 
   describe('findAll', () => {
@@ -92,6 +109,15 @@ describe('UsuariosSistemaService', () => {
       });
 
       await expect(service.findAll()).rejects.toThrow(BadRequestException);
+    });
+
+    it('should return empty array when data is null', async () => {
+      mockSupabaseClient.select.mockResolvedValueOnce({
+        data: null,
+        error: null,
+      });
+
+      await expect(service.findAll()).resolves.toEqual([]);
     });
   });
 
@@ -181,6 +207,27 @@ describe('UsuariosSistemaService', () => {
 
       expect(result.password_hash).toBeUndefined();
       expect(mockSupabaseClient.update).not.toHaveBeenCalled();
+    });
+
+    it('should ignore empty password while updating other fields', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: {
+          id_usuario_sistema: 1,
+          primer_nombre: 'Admin',
+          password_hash: 'secret',
+        },
+        error: null,
+      });
+
+      const result = await service.update(1, {
+        primer_nombre: 'Admin',
+        password: '',
+      } as any);
+
+      expect(mockSupabaseClient.update).toHaveBeenCalledWith({
+        primer_nombre: 'Admin',
+      });
+      expect(result.password_hash).toBeUndefined();
     });
 
     it('should throw BadRequestException when update fails', async () => {

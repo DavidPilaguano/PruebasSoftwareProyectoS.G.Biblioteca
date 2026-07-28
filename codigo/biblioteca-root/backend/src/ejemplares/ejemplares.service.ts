@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdateEjemplarDto } from './dto/update-ejemplar.dto';
 
 @Injectable()
 export class EjemplaresService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   async create(dto: CreateEjemplarDto) {
     if (!dto.id_libro) {

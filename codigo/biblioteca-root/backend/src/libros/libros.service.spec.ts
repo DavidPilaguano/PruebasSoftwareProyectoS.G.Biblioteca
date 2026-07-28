@@ -232,5 +232,44 @@ describe('LibrosService', () => {
       const result = await service.getDashboardStats();
       expect(result).toEqual({ libros: 0, usuarios: 0, ejemplares: 0 });
     });
+
+    it('should return zeros when libros count returns error', async () => {
+      mockSupabaseClient.from = jest.fn().mockReturnThis();
+      mockSupabaseClient.select = jest
+        .fn()
+        .mockResolvedValueOnce({ count: null, error: { message: 'libros' } })
+        .mockResolvedValueOnce({ count: 10, error: null })
+        .mockResolvedValueOnce({ count: 15, error: null });
+
+      const result = await service.getDashboardStats();
+
+      expect(result).toEqual({ libros: 0, usuarios: 0, ejemplares: 0 });
+    });
+
+    it('should return zeros when usuarios count returns error', async () => {
+      mockSupabaseClient.from = jest.fn().mockReturnThis();
+      mockSupabaseClient.select = jest
+        .fn()
+        .mockResolvedValueOnce({ count: 5, error: null })
+        .mockResolvedValueOnce({ count: null, error: { message: 'usuarios' } })
+        .mockResolvedValueOnce({ count: 15, error: null });
+
+      const result = await service.getDashboardStats();
+
+      expect(result).toEqual({ libros: 0, usuarios: 0, ejemplares: 0 });
+    });
+
+    it('should return zeros when ejemplares count returns error', async () => {
+      mockSupabaseClient.from = jest.fn().mockReturnThis();
+      mockSupabaseClient.select = jest
+        .fn()
+        .mockResolvedValueOnce({ count: 5, error: null })
+        .mockResolvedValueOnce({ count: 10, error: null })
+        .mockResolvedValueOnce({ count: null, error: { message: 'ejemplares' } });
+
+      const result = await service.getDashboardStats();
+
+      expect(result).toEqual({ libros: 0, usuarios: 0, ejemplares: 0 });
+    });
   });
 });

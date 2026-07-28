@@ -21,6 +21,7 @@ describe("Pagina editar usuario", () => {
     const view = await renderPagina(EditarUsuarioPage, /Editar Usuario/i);
 
     cambiar(view.container, "primer_nombre", "Dario Editado");
+    cambiar(view.container, "id_rol", "1");
     enviar(view.container);
 
     await waitFor(() => expect(api.usuariosApi.update).toHaveBeenCalled());

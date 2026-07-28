@@ -1,0 +1,207 @@
+name: CI/CD Biblioteca
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 20
+  BACKEND_DIR: codigo/biblioteca-root/backend
+  FRONTEND_DIR: codigo/biblioteca-root/frontend
+  K6_DIR: codigo/biblioteca-root/k6
+
+jobs:
+  backend:
+    name: Backend tests and build
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.BACKEND_DIR }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: npm ci
+
+      - name: Unit tests
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: npm run test
+
+      - name: Build
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: npm run build
+
+      - name: E2E tests
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_KEY != '' }}
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: npm run test:e2e
+
+  frontend:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ env.FRONTEND_DIR }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ env.FRONTEND_DIR }}
+        run: npm ci
+
+      - name: Tests
+        working-directory: ${{ env.FRONTEND_DIR }}
+        run: npm run test
+
+      - name: Build
+        working-directory: ${{ env.FRONTEND_DIR }}
+        env:
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL || 'https://backend-gray-one-13.vercel.app' }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+  deploy-backend:
+    name: Deploy backend to Vercel
+    runs-on: ubuntu-latest
+    needs:
+      - backend
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && always() && needs.backend.result == 'success' }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Vercel token
+        id: vercel_config
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Deploy skipped: configure VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_BACKEND_PROJECT_ID secrets to deploy the backend to Vercel."
+          fi
+
+      - name: Setup Node.js
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build Vercel artifact
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy backend to Vercel
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        working-directory: ${{ env.BACKEND_DIR }}
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+
+  k6:
+    name: k6 performance smoke on Vercel
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-backend
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && always() && (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped') }}
+    env:
+      K6_BASE_URL: ${{ vars.K6_BASE_URL || 'https://backend-gray-one-13.vercel.app' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run k6 smoke test
+        uses: grafana/run-k6-action@v1
+        with:
+          path: ${{ env.K6_DIR }}/smoke.js
+          flags: -e BASE_URL=${{ env.K6_BASE_URL }}
+
+  deploy-frontend:
+    name: Deploy frontend to Vercel
+    runs-on: ubuntu-latest
+    needs:
+      - frontend
+      - k6
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && always() && needs.frontend.result == 'success' && needs.k6.result == 'success' }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Vercel token
+        id: vercel_config
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Deploy skipped: configure VERCEL_TOKEN, VERCEL_ORG_ID and VERCEL_FRONTEND_PROJECT_ID secrets to deploy the frontend to Vercel."
+          fi
+
+      - name: Setup Node.js
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        working-directory: ${{ env.FRONTEND_DIR }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build Vercel artifact
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        working-directory: ${{ env.FRONTEND_DIR }}
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy frontend to Vercel
+        if: ${{ steps.vercel_config.outputs.deploy == 'true' }}
+        working-directory: ${{ env.FRONTEND_DIR }}
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

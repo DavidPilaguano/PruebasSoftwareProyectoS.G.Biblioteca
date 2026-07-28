@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { usuariosSistemaApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateUsuarioSistemaDto } from "@/types/biblioteca";
 
 export default function CrearUsuarioSistemaPage() {
@@ -59,11 +60,7 @@ export default function CrearUsuarioSistemaPage() {
       await usuariosSistemaApi.create(formData);
       router.push("/usuarios-sistema");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Error creando usuario del sistema",
-      );
+      setError(errorMessage(err, "Error creando usuario del sistema"));
     } finally {
       setLoading(false);
     }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { prestamosApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { Prestamo } from "@/types/biblioteca";
 
 export default function PrestamosPage() {
@@ -17,7 +18,7 @@ export default function PrestamosPage() {
         setPrestamos(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando préstamos",
+          errorMessage(err, "Error cargando préstamos"),
         );
       } finally {
         setLoading(false);
@@ -36,7 +37,7 @@ export default function PrestamosPage() {
       await prestamosApi.delete(id);
       setPrestamos(prestamos.filter((p) => p.id_prestamo !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error cancelando préstamo");
+      alert(errorMessage(err, "Error cancelando préstamo"));
     }
   };
 

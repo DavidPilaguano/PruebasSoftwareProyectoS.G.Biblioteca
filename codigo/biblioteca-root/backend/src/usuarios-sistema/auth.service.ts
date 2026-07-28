@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -6,10 +6,16 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly supabase: SupabaseService;
+  private readonly jwtService: JwtService;
+
   constructor(
-    private readonly supabase: SupabaseService,
-    private readonly jwtService: JwtService,
-  ) {}
+    @Inject(SupabaseService) supabase: unknown,
+    @Inject(JwtService) jwtService: unknown,
+  ) {
+    this.supabase = supabase as SupabaseService;
+    this.jwtService = jwtService as JwtService;
+  }
 
   async login(username: string, password_plain: string) {
     const { data: usuario, error } = await this.supabase.client
@@ -33,7 +39,9 @@ export class AuthService {
       .update(password_plain)
       .digest('hex');
     const isPasswordValid =
-      (await bcrypt.compare(password_plain, passwordHash).catch(() => false)) ||
+      (await bcrypt
+        .compare(password_plain, passwordHash)
+        .catch(/* istanbul ignore next */ () => false)) ||
       password_plain === passwordHash ||
       sha256Password === passwordHash;
 

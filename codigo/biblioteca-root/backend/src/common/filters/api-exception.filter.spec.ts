@@ -42,6 +42,40 @@ describe('ApiExceptionFilter', () => {
     );
   });
 
+  it('keeps plain string HttpException responses', () => {
+    const filter = new ApiExceptionFilter();
+    const { host, json } = createHost();
+
+    filter.catch(new HttpException('texto plano', HttpStatus.I_AM_A_TEAPOT), host);
+
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'texto plano',
+        error: 'Bad Request',
+      }),
+    );
+  });
+
+  it('falls back when object response has non-string message and error', () => {
+    const filter = new ApiExceptionFilter();
+    const { host, json } = createHost();
+
+    filter.catch(
+      new HttpException(
+        { message: 123, error: 456 },
+        HttpStatus.BAD_REQUEST,
+      ),
+      host,
+    );
+
+    expect(json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.any(String),
+        error: 'Bad Request',
+      }),
+    );
+  });
+
   it('wraps object HttpException responses with array messages and error', () => {
     const filter = new ApiExceptionFilter();
     const { host, status, json } = createHost();

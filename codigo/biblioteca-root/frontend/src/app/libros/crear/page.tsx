@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { librosApi, categoriasApi, editorialesApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateLibroDto, Categoria, Editorial } from "@/types/biblioteca";
 
 export default function CrearLibroPage() {
@@ -33,7 +34,7 @@ export default function CrearLibroPage() {
         setCategorias(cats);
         setEditoriales(edits);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando datos");
+        setError(errorMessage(err, "Error cargando datos"));
       } finally {
         setLoadingData(false);
       }
@@ -79,7 +80,7 @@ export default function CrearLibroPage() {
       await librosApi.create(formData);
       router.push("/libros");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando libro");
+      setError(errorMessage(err, "Error creando libro"));
     } finally {
       setLoading(false);
     }

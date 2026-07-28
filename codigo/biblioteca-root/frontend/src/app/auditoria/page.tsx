@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { auditoriaApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { Auditoria } from "@/types/biblioteca";
 
 export default function AuditoriaPage() {
@@ -16,7 +17,7 @@ export default function AuditoriaPage() {
         setRegistros(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando auditoría",
+          errorMessage(err, "Error cargando auditoría"),
         );
       } finally {
         setLoading(false);

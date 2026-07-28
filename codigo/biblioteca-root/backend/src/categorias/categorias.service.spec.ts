@@ -35,6 +35,12 @@ describe('CategoriasService', () => {
   });
 
   describe('create', () => {
+    it('should throw BadRequestException when name is missing', async () => {
+      await expect(service.create({} as any)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
     it('should create a category', async () => {
       const dto = { nombre: 'Ficción' };
       mockSupabaseClient.single.mockResolvedValueOnce({

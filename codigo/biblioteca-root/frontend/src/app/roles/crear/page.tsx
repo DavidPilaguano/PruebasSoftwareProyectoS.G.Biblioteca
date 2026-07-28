@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { rolesApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateRolUsuarioDto } from "@/types/biblioteca";
 
 export default function CrearRolPage() {
@@ -49,7 +50,7 @@ export default function CrearRolPage() {
       await rolesApi.create(formData);
       router.push("/roles");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando rol");
+      setError(errorMessage(err, "Error creando rol"));
     } finally {
       setLoading(false);
     }

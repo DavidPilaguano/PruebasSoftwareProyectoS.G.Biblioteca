@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdateEditorialDto } from './dto/update-editorial.dto';
 
 @Injectable()
 export class EditorialesService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   async create(dto: CreateEditorialDto) {
     if (!dto.nombre) {

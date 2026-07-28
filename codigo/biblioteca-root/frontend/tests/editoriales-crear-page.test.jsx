@@ -31,4 +31,18 @@ describe("Pagina crear editorial", () => {
 
     expect(screen.getByText(/Por favor completa/i)).toBeInTheDocument();
   });
+
+  test("muestra error al crear editorial", async () => {
+    const api = require("@/lib/api");
+    const view = await renderPagina(CrearEditorialPage, /Crear Editorial/i);
+
+    api.editorialesApi.create.mockRejectedValueOnce(new Error("Error creando editorial"));
+    cambiar(view.container, "nombre", "Editorial ESPE");
+    cambiar(view.container, "pais", "Ecuador");
+    enviar(view.container);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error creando editorial")).toBeInTheDocument(),
+    );
+  });
 });

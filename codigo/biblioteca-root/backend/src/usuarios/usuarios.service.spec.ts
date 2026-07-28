@@ -75,6 +75,50 @@ describe('UsuariosService', () => {
       ).rejects.toThrow('Ya existe un usuario registrado con esa cedula');
     });
 
+    it('should return friendly error when institutional code already exists', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: null,
+        error: {
+          message:
+            'duplicate key value violates unique constraint "usuario_codigo_institucional_key"',
+        },
+      });
+
+      await expect(
+        service.create({
+          codigo_institucional: 'L00432332',
+          primer_nombre: 'Dario',
+          primer_apellido: 'Pilaguano',
+          correo: 'dapilaguano@espe.edu.ec',
+          id_rol: 1,
+        }),
+      ).rejects.toThrow(
+        'Ya existe un usuario registrado con ese codigo institucional',
+      );
+    });
+
+    it('should return friendly error when email already exists', async () => {
+      mockSupabaseClient.single.mockResolvedValueOnce({
+        data: null,
+        error: {
+          message:
+            'duplicate key value violates unique constraint "usuario_correo_key"',
+        },
+      });
+
+      await expect(
+        service.create({
+          codigo_institucional: 'L00432332',
+          primer_nombre: 'Dario',
+          primer_apellido: 'Pilaguano',
+          correo: 'dapilaguano@espe.edu.ec',
+          id_rol: 1,
+        }),
+      ).rejects.toThrow(
+        'Ya existe un usuario registrado con ese correo electronico',
+      );
+    });
+
     it('should create and return usuario data', async () => {
       const newUsuario = {
         id_usuario: 1,

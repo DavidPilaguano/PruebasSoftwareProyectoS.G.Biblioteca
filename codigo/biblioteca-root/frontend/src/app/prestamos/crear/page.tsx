@@ -9,6 +9,7 @@ import {
   usuariosSistemaApi,
   ejemplaresApi,
 } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type {
   CreatePrestamoDto,
   Usuario,
@@ -46,7 +47,7 @@ export default function CrearPrestamoPage() {
         // Filtrar solo ejemplares disponibles
         setEjemplares(ejems.filter((e: Ejemplar) => e.estado === "DISPONIBLE"));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando datos");
+        setError(errorMessage(err, "Error cargando datos"));
       } finally {
         setLoadingData(false);
       }
@@ -96,7 +97,7 @@ export default function CrearPrestamoPage() {
       await prestamosApi.create(submitData);
       router.push("/prestamos");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando préstamo");
+      setError(errorMessage(err, "Error creando préstamo"));
     } finally {
       setLoading(false);
     }
@@ -186,7 +187,7 @@ export default function CrearPrestamoPage() {
               <option value={0}>Selecciona un ejemplar disponible</option>
               {ejemplares.map((ej) => (
                 <option key={ej.id_ejemplar} value={ej.id_ejemplar}>
-                  {ej.libro?.titulo} - Código: {ej.codigo_barra || "N/A"}
+                  {ej.libro?.titulo} - Código: {textOr(ej.codigo_barra, "N/A")}
                 </option>
               ))}
             </select>

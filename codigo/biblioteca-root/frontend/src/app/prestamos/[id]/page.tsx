@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { prestamosApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type { Prestamo, UpdatePrestamoDto } from "@/types/biblioteca";
 
 export default function EditarPrestamoPage() {
@@ -36,7 +37,7 @@ export default function EditarPrestamoPage() {
         });
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando préstamo",
+          errorMessage(err, "Error cargando préstamo"),
         );
       } finally {
         setLoading(false);
@@ -66,7 +67,7 @@ export default function EditarPrestamoPage() {
       router.push("/prestamos");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error actualizando préstamo",
+        errorMessage(err, "Error actualizando préstamo"),
       );
     } finally {
       setSaving(false);
@@ -127,7 +128,7 @@ export default function EditarPrestamoPage() {
             <input
               type="text"
               disabled
-              value={prestamo.ejemplar?.libro?.titulo || "No disponible"}
+              value={textOr(prestamo.ejemplar?.libro?.titulo, "No disponible")}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600"
             />
           </div>
@@ -168,7 +169,7 @@ export default function EditarPrestamoPage() {
             <input
               type="date"
               name="fecha_devolucion_esperada"
-              value={formData.fecha_devolucion_esperada || ""}
+              value={textOr(formData.fecha_devolucion_esperada, "")}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -181,7 +182,7 @@ export default function EditarPrestamoPage() {
             <input
               type="date"
               name="fecha_devolucion_real"
-              value={formData.fecha_devolucion_real || ""}
+              value={textOr(formData.fecha_devolucion_real, "")}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

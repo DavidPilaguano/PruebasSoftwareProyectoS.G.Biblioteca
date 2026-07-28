@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { rolesApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { RolUsuario } from "@/types/biblioteca";
 
 export default function RolesPage() {
@@ -16,7 +17,7 @@ export default function RolesPage() {
         const data = await rolesApi.getAll();
         setRoles(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando roles");
+        setError(errorMessage(err, "Error cargando roles"));
       } finally {
         setLoading(false);
       }
@@ -34,7 +35,7 @@ export default function RolesPage() {
       await rolesApi.delete(id);
       setRoles(roles.filter((r) => r.id_rol !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error eliminando rol");
+      alert(errorMessage(err, "Error eliminando rol"));
     }
   };
 

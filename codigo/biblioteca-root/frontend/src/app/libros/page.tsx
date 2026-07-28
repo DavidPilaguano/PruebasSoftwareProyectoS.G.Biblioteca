@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { librosApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type { Libro } from "@/types/biblioteca";
 
 export default function LibrosPage() {
@@ -19,7 +20,7 @@ export default function LibrosPage() {
         const data = await librosApi.getAll();
         setLibros(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando libros");
+        setError(errorMessage(err, "Error cargando libros"));
       } finally {
         setLoading(false);
       }
@@ -37,7 +38,7 @@ export default function LibrosPage() {
       await librosApi.delete(id);
       setLibros(libros.filter((l) => l.id_libro !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error eliminando libro");
+      alert(errorMessage(err, "Error eliminando libro"));
     }
   };
 
@@ -125,14 +126,14 @@ export default function LibrosPage() {
                     {libro.titulo}
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
-                    {libro.isbn || "N/A"}
+                    {textOr(libro.isbn, "N/A")}
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     {libro.anio_publicacion}
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     <span className="px-2 py-1 bg-slate-100 text-slate-800 rounded text-xs font-medium">
-                      {libro.categoria?.nombre || "Sin categoría"}
+                      {textOr(libro.categoria?.nombre, "Sin categoría")}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-sm space-x-2">

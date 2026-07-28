@@ -44,6 +44,18 @@ describe("Pagina libros", () => {
     await waitFor(() => expect(screen.getByText(/No hay libros/i)).toBeInTheDocument());
   });
 
+  test("muestra categoria por defecto cuando no existe", async () => {
+    const api = require("@/lib/api");
+    const { libro } = require("./support/app-test-utils");
+
+    api.librosApi.getAll.mockResolvedValueOnce([{ ...libro, categoria: undefined }]);
+    await renderPagina(LibrosPage, /Libros/i);
+
+    await waitFor(() =>
+      expect(screen.getByText(/Sin categor/i)).toBeInTheDocument(),
+    );
+  });
+
   test("muestra error de carga", async () => {
     const api = require("@/lib/api");
 

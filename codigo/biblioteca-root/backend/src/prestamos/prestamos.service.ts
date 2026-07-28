@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdatePrestamoDto } from './dto/update-prestamo.dto';
 
 @Injectable()
 export class PrestamosService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   async create(dto: CreatePrestamoDto) {
     const { data, error } = await this.supabase.client

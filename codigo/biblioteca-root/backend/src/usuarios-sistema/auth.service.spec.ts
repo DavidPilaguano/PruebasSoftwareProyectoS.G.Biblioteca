@@ -2,6 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { AuthService } from './auth.service';
 import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
   let query: any;
@@ -81,6 +82,25 @@ describe('AuthService', () => {
       rol_sistema: 'ADMINISTRADOR',
       nombre: 'Admin Sistema',
     });
+    expect(result.access_token).toBe('jwt-token');
+  });
+
+  it('logs in with bcrypt password hash', async () => {
+    const passwordHash = await bcrypt.hash('segura123', 4);
+    query.single.mockResolvedValue({
+      data: {
+        id_usuario_sistema: 3,
+        username: 'bcrypt',
+        password_hash: passwordHash,
+        rol_sistema: 'BIBLIOTECARIO',
+        primer_nombre: 'Biblio',
+        primer_apellido: 'Tecario',
+      },
+      error: null,
+    });
+
+    const result = await service.login('bcrypt', 'segura123');
+
     expect(result.access_token).toBe('jwt-token');
   });
 

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usuariosApi, rolesApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateUsuarioDto, RolUsuario } from "@/types/biblioteca";
 
 export default function CrearUsuarioPage() {
@@ -32,7 +33,7 @@ export default function CrearUsuarioPage() {
         const data = await rolesApi.getAll();
         setRoles(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando roles");
+        setError(errorMessage(err, "Error cargando roles"));
       } finally {
         setLoadingData(false);
       }
@@ -72,7 +73,7 @@ export default function CrearUsuarioPage() {
       await usuariosApi.create(formData);
       router.push("/usuarios");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando usuario");
+      setError(errorMessage(err, "Error creando usuario"));
     } finally {
       setLoading(false);
     }

@@ -38,4 +38,21 @@ describe("Pagina login", () => {
       expect(screen.getByText(/Usuario o contrase/i)).toBeInTheDocument(),
     );
   });
+
+  test("ignora un segundo envio mientras esta cargando", async () => {
+    const view = await renderPagina(LoginPage, /Biblioteca ESPE/i);
+    mockLogin.mockImplementationOnce(() => new Promise(() => {}));
+    const loginInputs = view.container.querySelectorAll("input");
+
+    fireEvent.change(loginInputs[0], { target: { value: "dpilaguano" } });
+    fireEvent.change(loginInputs[1], { target: { value: "hash_admin" } });
+    enviar(view.container);
+
+    await waitFor(() =>
+      expect(screen.getByText(/Validando credenciales/i)).toBeInTheDocument(),
+    );
+    enviar(view.container);
+
+    expect(mockLogin).toHaveBeenCalledTimes(1);
+  });
 });

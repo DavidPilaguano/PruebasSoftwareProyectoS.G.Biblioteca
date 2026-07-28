@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   BadRequestException,
   NotFoundException,
@@ -9,7 +10,11 @@ import { UpdateAuditoriaDto } from './dto/update-auditoria.dto';
 
 @Injectable()
 export class AuditoriaService {
-  constructor(private readonly supabase: SupabaseService) {}
+  private readonly supabase: SupabaseService;
+
+  constructor(@Inject(SupabaseService) supabase: unknown) {
+    this.supabase = supabase as SupabaseService;
+  }
 
   async create(dto: CreateAuditoriaDto) {
     if (!dto.tabla_afectada || !dto.id_registro || !dto.accion) {

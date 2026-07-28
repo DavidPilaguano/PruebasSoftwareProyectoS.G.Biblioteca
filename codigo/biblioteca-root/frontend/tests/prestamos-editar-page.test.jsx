@@ -22,6 +22,8 @@ describe("Pagina editar prestamo", () => {
     const view = await renderPagina(EditarPrestamoPage, /Editar Pr/i);
 
     cambiar(view.container, "estado", "DEVUELTO");
+    cambiar(view.container, "fecha_devolucion_real", "2026-07-20");
+    cambiar(view.container, "fecha_devolucion_real", "");
     enviar(view.container);
 
     await waitFor(() => expect(api.prestamosApi.update).toHaveBeenCalled());

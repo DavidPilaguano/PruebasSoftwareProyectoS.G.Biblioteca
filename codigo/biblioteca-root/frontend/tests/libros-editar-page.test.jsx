@@ -21,6 +21,7 @@ describe("Pagina editar libro", () => {
     const view = await renderPagina(EditarLibroPage, /Editar Libro/i);
 
     cambiar(view.container, "titulo", "Libro Editado");
+    cambiar(view.container, "id_categoria", "1");
     enviar(view.container);
 
     await waitFor(() => expect(api.librosApi.update).toHaveBeenCalled());

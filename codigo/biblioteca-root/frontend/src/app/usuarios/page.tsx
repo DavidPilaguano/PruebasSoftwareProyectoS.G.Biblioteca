@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usuariosApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type { Usuario } from "@/types/biblioteca";
 
 export default function UsuariosPage() {
@@ -17,7 +18,7 @@ export default function UsuariosPage() {
         setUsuarios(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando usuarios",
+          errorMessage(err, "Error cargando usuarios"),
         );
       } finally {
         setLoading(false);
@@ -36,7 +37,7 @@ export default function UsuariosPage() {
       await usuariosApi.delete(id);
       setUsuarios(usuarios.filter((u) => u.id_usuario !== id));
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Error eliminando usuario");
+      alert(errorMessage(err, "Error eliminando usuario"));
     }
   };
 
@@ -103,7 +104,7 @@ export default function UsuariosPage() {
                     {usuario.primer_nombre} {usuario.primer_apellido}
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
-                    {usuario.cedula || "-"}
+                    {textOr(usuario.cedula, "-")}
                   </td>
                   <td className="px-6 py-3 text-sm text-slate-600">
                     {usuario.correo}

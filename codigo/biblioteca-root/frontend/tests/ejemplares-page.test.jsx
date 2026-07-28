@@ -39,6 +39,19 @@ describe("Pagina ejemplares", () => {
     expect(screen.getByText("PERDIDO")).toBeInTheDocument();
   });
 
+  test("muestra fecha vacia cuando no existe fecha de adquisicion", async () => {
+    const api = require("@/lib/api");
+
+    api.ejemplaresApi.getAll.mockResolvedValueOnce([
+      { ...ejemplar, fecha_adquisicion: "" },
+    ]);
+
+    await renderPagina(EjemplaresPage, /Ejemplares/i);
+
+    await waitFor(() => expect(screen.getByText("BC-001")).toBeInTheDocument());
+    expect(screen.getAllByText("-").length).toBeGreaterThan(0);
+  });
+
   test("muestra estado vacio", async () => {
     const api = require("@/lib/api");
 

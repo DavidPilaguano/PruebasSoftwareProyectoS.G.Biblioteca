@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usuariosSistemaApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type {
   UsuarioSistema,
   UpdateUsuarioSistemaDto,
@@ -37,26 +38,20 @@ export default function EditarUsuarioSistemaPage() {
         setFormData({
           username: usuarioData.username,
           primer_nombre: usuarioData.primer_nombre,
-          segundo_nombre: usuarioData.segundo_nombre || "",
+          segundo_nombre: textOr(usuarioData.segundo_nombre, ""),
           primer_apellido: usuarioData.primer_apellido,
-          segundo_apellido: usuarioData.segundo_apellido || "",
+          segundo_apellido: textOr(usuarioData.segundo_apellido, ""),
           estado: usuarioData.estado,
           rol_sistema: usuarioData.rol_sistema,
         });
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Error cargando usuario del sistema",
-        );
+        setError(errorMessage(err, "Error cargando usuario del sistema"));
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      loadData();
-    }
+    loadData();
   }, [id]);
 
   const handleChange = (
@@ -85,11 +80,7 @@ export default function EditarUsuarioSistemaPage() {
       router.push("/usuarios-sistema");
       router.refresh();
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Error actualizando usuario del sistema",
-      );
+      setError(errorMessage(err, "Error actualizando usuario del sistema"));
     } finally {
       setSaving(false);
     }

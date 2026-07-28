@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ejemplaresApi, librosApi } from "@/lib/api";
+import { errorMessage, textOr } from "@/lib/ui-helpers";
 import type { Ejemplar, UpdateEjemplarDto, Libro } from "@/types/biblioteca";
 
 export default function EditarEjemplarPage() {
@@ -33,11 +34,11 @@ export default function EditarEjemplarPage() {
         setLibros(librosData);
         setFormData({
           estado: ejemplarData.estado,
-          ubicacion_fisica: ejemplarData.ubicacion_fisica || "",
+          ubicacion_fisica: textOr(ejemplarData.ubicacion_fisica, ""),
         });
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Error cargando ejemplar",
+          errorMessage(err, "Error cargando ejemplar"),
         );
       } finally {
         setLoading(false);
@@ -67,7 +68,7 @@ export default function EditarEjemplarPage() {
       router.push("/ejemplares");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error actualizando ejemplar",
+        errorMessage(err, "Error actualizando ejemplar"),
       );
     } finally {
       setSaving(false);
@@ -95,7 +96,7 @@ export default function EditarEjemplarPage() {
         </Link>
         <h1 className="text-3xl font-bold text-slate-900">Editar Ejemplar</h1>
         <p className="text-slate-600 mt-1">
-          Código: {ejemplar.codigo_barra || "N/A"}
+          Código: {textOr(ejemplar.codigo_barra, "N/A")}
         </p>
       </div>
 
@@ -114,7 +115,7 @@ export default function EditarEjemplarPage() {
             <input
               type="text"
               disabled
-              value={ejemplar.libro?.titulo || "No disponible"}
+              value={textOr(ejemplar.libro?.titulo, "No disponible")}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600"
             />
           </div>

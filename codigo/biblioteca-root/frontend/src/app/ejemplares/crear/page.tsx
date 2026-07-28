@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ejemplaresApi, librosApi } from "@/lib/api";
+import { errorMessage } from "@/lib/ui-helpers";
 import type { CreateEjemplarDto, Libro } from "@/types/biblioteca";
 
 export default function CrearEjemplarPage() {
@@ -27,7 +28,7 @@ export default function CrearEjemplarPage() {
         const data = await librosApi.getAll();
         setLibros(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando libros");
+        setError(errorMessage(err, "Error cargando libros"));
       } finally {
         setLoadingData(false);
       }
@@ -61,7 +62,7 @@ export default function CrearEjemplarPage() {
       await ejemplaresApi.create(formData);
       router.push("/ejemplares");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando ejemplar");
+      setError(errorMessage(err, "Error creando ejemplar"));
     } finally {
       setLoading(false);
     }

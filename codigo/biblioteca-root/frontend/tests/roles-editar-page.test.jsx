@@ -21,6 +21,7 @@ describe("Pagina editar rol", () => {
     const view = await renderPagina(EditarRolPage, /Editar Rol/i);
 
     cambiar(view.container, "nombre", "DOCENTE");
+    cambiar(view.container, "max_prestamos", "7");
     enviar(view.container);
 
     await waitFor(() => expect(api.rolesApi.update).toHaveBeenCalled());

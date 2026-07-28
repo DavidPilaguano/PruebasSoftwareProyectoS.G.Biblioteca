@@ -34,4 +34,31 @@ describe("Pagina crear libro", () => {
 
     expect(screen.getByText(/Por favor completa/i)).toBeInTheDocument();
   });
+
+  test("muestra error al cargar datos", async () => {
+    const api = require("@/lib/api");
+
+    api.categoriasApi.getAll.mockRejectedValueOnce(new Error("Error cargando datos"));
+    await renderPagina(CrearLibroPage, /Crear Libro/i);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error cargando datos")).toBeInTheDocument(),
+    );
+  });
+
+  test("muestra error al crear libro", async () => {
+    const api = require("@/lib/api");
+    const view = await renderPagina(CrearLibroPage, /Crear Libro/i);
+
+    api.librosApi.create.mockRejectedValueOnce(new Error("Error creando libro"));
+    cambiar(view.container, "titulo", "Libro Nuevo");
+    cambiar(view.container, "isbn", "978-0000000002");
+    cambiar(view.container, "id_categoria", "1");
+    cambiar(view.container, "id_editorial", "1");
+    enviar(view.container);
+
+    await waitFor(() =>
+      expect(screen.getByText("Error creando libro")).toBeInTheDocument(),
+    );
+  });
 });
