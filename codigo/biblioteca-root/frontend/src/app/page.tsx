@@ -10,6 +10,32 @@ interface DashboardStats {
   ejemplares: number;
 }
 
+interface LibroDashboard {
+  id_libro?: number;
+  titulo?: string;
+  categoria?: {
+    nombre?: string;
+  };
+}
+
+interface EjemplarDashboard {
+  estado?: string;
+}
+
+interface PrestamoDashboard {
+  estado?: string;
+}
+
+interface UsuarioDashboard {
+  estado?: string;
+}
+
+interface ChartItem {
+  label: string;
+  value: number;
+  percent: number;
+}
+
 interface DashboardMetrics {
   prestamosActivos: number;
   prestamosDevueltos: number;
@@ -28,6 +54,30 @@ const initialMetrics: DashboardMetrics = {
   librosRegistrados: 0,
 };
 
+const countBy = <T,>(
+  items: T[],
+  getKey: (item: T) => string | undefined,
+): Record<string, number> =>
+  items.reduce<Record<string, number>>((acc, item) => {
+    const key = getKey(item) || "Sin clasificar";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+const toChartItems = (
+  counts: Record<string, number>,
+  total: number,
+  limit = 6,
+): ChartItem[] =>
+  Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([label, value]) => ({
+      label,
+      value,
+      percent: Math.round((value / Math.max(total, 1)) * 100),
+    }));
+
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     libros: 0,
@@ -35,6 +85,9 @@ export default function Dashboard() {
     ejemplares: 0,
   });
   const [metrics, setMetrics] = useState<DashboardMetrics>(initialMetrics);
+  const [categoryChart, setCategoryChart] = useState<ChartItem[]>([]);
+  const [copyChart, setCopyChart] = useState<ChartItem[]>([]);
+  const [loanChart, setLoanChart] = useState<ChartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,25 +103,55 @@ export default function Dashboard() {
             librosApi.getAll(),
           ]);
 
+        const typedPrestamos = prestamos as PrestamoDashboard[];
+        const typedEjemplares = ejemplares as EjemplarDashboard[];
+        const typedUsuarios = usuarios as UsuarioDashboard[];
+        const typedLibros = libros as LibroDashboard[];
+
+        const prestamosActivos = typedPrestamos.filter(
+          (prestamo) => prestamo.estado === "ACTIVO",
+        ).length;
+        const prestamosDevueltos = typedPrestamos.filter(
+          (prestamo) => prestamo.estado === "DEVUELTO",
+        ).length;
+        const ejemplaresDisponibles = typedEjemplares.filter(
+          (ejemplar) => ejemplar.estado === "DISPONIBLE",
+        ).length;
+        const ejemplaresPrestados = typedEjemplares.filter(
+          (ejemplar) => ejemplar.estado === "PRESTADO",
+        ).length;
+        const usuariosActivos = typedUsuarios.filter(
+          (usuario) => usuario.estado === "ACTIVO",
+        ).length;
+
         setMetrics({
-          prestamosActivos: prestamos.filter(
-            (prestamo: { estado?: string }) => prestamo.estado === "ACTIVO",
-          ).length,
-          prestamosDevueltos: prestamos.filter(
-            (prestamo: { estado?: string }) => prestamo.estado === "DEVUELTO",
-          ).length,
-          ejemplaresDisponibles: ejemplares.filter(
-            (ejemplar: { estado?: string }) => ejemplar.estado === "DISPONIBLE",
-          ).length,
-          ejemplaresPrestados: ejemplares.filter(
-            (ejemplar: { estado?: string }) => ejemplar.estado === "PRESTADO",
-          ).length,
-          usuariosActivos: usuarios.filter(
-            (usuario: { estado?: string }) => usuario.estado === "ACTIVO",
-          ).length,
-          librosRegistrados: libros.length,
+          prestamosActivos,
+          prestamosDevueltos,
+          ejemplaresDisponibles,
+          ejemplaresPrestados,
+          usuariosActivos,
+          librosRegistrados: typedLibros.length,
         });
-        setStats(statsData);
+        setStats(statsData as DashboardStats);
+        setCategoryChart(
+          toChartItems(
+            countBy(typedLibros, (libro) => libro.categoria?.nombre),
+            typedLibros.length,
+          ),
+        );
+        setCopyChart(
+          toChartItems(
+            countBy(typedEjemplares, (ejemplar) => ejemplar.estado),
+            typedEjemplares.length,
+          ),
+        );
+        setLoanChart(
+          toChartItems(
+            countBy(typedPrestamos, (prestamo) => prestamo.estado),
+            typedPrestamos.length,
+            4,
+          ),
+        );
       } catch (error) {
         console.error("Error cargando datos del dashboard:", error);
       } finally {
@@ -89,6 +172,7 @@ export default function Dashboard() {
       : 0;
   const cobertura =
     stats.libros > 0 ? (stats.ejemplares / stats.libros).toFixed(1) : "0.0";
+  const catalogoTotal = metrics.librosRegistrados || stats.libros;
 
   const statCards = [
     {
@@ -98,7 +182,7 @@ export default function Dashboard() {
     },
     {
       label: "Libros en Catalogo",
-      value: metrics.librosRegistrados || stats.libros,
+      value: catalogoTotal,
       detail: `${stats.ejemplares} ejemplares`,
     },
     {
@@ -120,7 +204,7 @@ export default function Dashboard() {
           <p className="app-kicker">Panel ejecutivo</p>
           <h1 className="text-4xl font-bold text-slate-900">Dashboard</h1>
           <p className="text-slate-600 mt-2">
-            Sistema de Gestion de Biblioteca
+            Gestion visual del catalogo, circulacion e inventario.
           </p>
         </div>
         <Link href="/prestamos/crear" className="hero-action">
@@ -144,28 +228,67 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="action-panel bg-white rounded-lg shadow p-6">
-          <p className="app-kicker">Inventario</p>
-          <h2 className="text-xl font-semibold text-slate-900 mt-2">
-            Salud del catalogo
-          </h2>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+        <div className="action-panel chart-panel bg-white rounded-lg shadow p-6">
+          <div className="chart-heading">
+            <div>
+              <p className="app-kicker">Inventario</p>
+              <h2 className="text-xl font-semibold text-slate-900 mt-2">
+                Estado de ejemplares
+              </h2>
+            </div>
+            <div
+              className="donut-chart"
+              style={{
+                background: `conic-gradient(var(--brand) 0 ${disponibilidad}%, var(--danger) ${disponibilidad}% 100%)`,
+              }}
+            >
+              <span>{loading ? "..." : `${disponibilidad}%`}</span>
+            </div>
+          </div>
           <div className="metric-row">
-            <span>Disponibilidad</span>
-            <strong>{loading ? "..." : `${disponibilidad}%`}</strong>
+            <span>Disponibles</span>
+            <strong>{metrics.ejemplaresDisponibles}</strong>
           </div>
           <div className="metric-bar">
             <span style={{ width: `${disponibilidad}%` }} />
           </div>
           <div className="metric-row">
-            <span>Circulacion</span>
-            <strong>{loading ? "..." : `${circulacion}%`}</strong>
+            <span>En circulacion</span>
+            <strong>{metrics.ejemplaresPrestados}</strong>
           </div>
           <div className="metric-bar metric-bar-accent">
             <span style={{ width: `${circulacion}%` }} />
           </div>
         </div>
 
+        <div className="action-panel chart-panel bg-white rounded-lg shadow p-6 xl:col-span-2">
+          <div className="chart-heading">
+            <div>
+              <p className="app-kicker">Catalogo</p>
+              <h2 className="text-xl font-semibold text-slate-900 mt-2">
+                Libros por categoria
+              </h2>
+            </div>
+            <div className="chart-total">{catalogoTotal}</div>
+          </div>
+          <div className="bar-chart">
+            {categoryChart.map((item) => (
+              <div className="bar-chart-row" key={item.label}>
+                <div className="bar-chart-label">
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </div>
+                <div className="bar-chart-track">
+                  <span style={{ width: `${item.percent}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <div className="action-panel bg-white rounded-lg shadow p-6">
           <p className="app-kicker">Gestion</p>
           <h2 className="text-xl font-semibold text-slate-900 mt-2">
@@ -178,14 +301,35 @@ export default function Dashboard() {
         </div>
 
         <div className="action-panel bg-white rounded-lg shadow p-6">
-          <p className="app-kicker">Actividad</p>
+          <p className="app-kicker">Prestamos</p>
           <h2 className="text-xl font-semibold text-slate-900 mt-2">
-            Movimiento reciente
+            Distribucion de movimientos
           </h2>
-          <div className="space-y-3 mt-4 text-sm text-slate-600">
-            <p>{metrics.prestamosActivos} prestamos siguen activos.</p>
-            <p>{metrics.prestamosDevueltos} prestamos fueron cerrados.</p>
-            <p>{metrics.ejemplaresPrestados} ejemplares estan en circulacion.</p>
+          <div className="mini-bars">
+            {loanChart.map((item) => (
+              <div className="mini-bar" key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <div>
+                  <i style={{ width: `${item.percent}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="action-panel bg-white rounded-lg shadow p-6">
+          <p className="app-kicker">Ejemplares</p>
+          <h2 className="text-xl font-semibold text-slate-900 mt-2">
+            Estado operativo
+          </h2>
+          <div className="status-grid">
+            {copyChart.map((item) => (
+              <div key={item.label} className="status-pill">
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </div>
+            ))}
           </div>
         </div>
       </div>

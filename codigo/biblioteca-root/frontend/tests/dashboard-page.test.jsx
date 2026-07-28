@@ -11,8 +11,15 @@ import DashboardPage from "@/app/page";
 
 describe("Pagina dashboard", () => {
   test("renderiza la pagina", async () => {
+    const api = require("@/lib/api");
+    api.librosApi.getAll.mockResolvedValueOnce([
+      { id_libro: 1, titulo: "Libro A", categoria: { nombre: "Programacion" } },
+      { id_libro: 2, titulo: "Libro B" },
+    ]);
+
     await renderPagina(DashboardPage, /Dashboard/i);
     await waitFor(() => expect(screen.getAllByText("100%")).toHaveLength(2));
+    expect(screen.getByText("Sin clasificar")).toBeInTheDocument();
   });
 
   test("cubre error al cargar datos del dashboard", async () => {
@@ -43,7 +50,7 @@ describe("Pagina dashboard", () => {
     render(React.createElement(DashboardPage));
 
     await waitFor(() => expect(screen.getByText("0.0")).toBeInTheDocument());
-    expect(screen.getAllByText("0%")).toHaveLength(3);
+    expect(screen.getAllByText("0%")).toHaveLength(2);
     cleanup();
   });
 });
