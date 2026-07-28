@@ -7,7 +7,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // ⏳ Control de carga
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,19 +22,46 @@ export default function LoginPage() {
       await login(username, password);
     } catch (err) {
       setError("Usuario o contraseña incorrectos");
-      setIsLoading(false); // Liberamos el formulario si hay un fallo
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full border border-slate-200">
-        <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">
-          Biblioteca ESPE
-        </h1>
-        <p className="text-slate-600 text-center text-sm mb-6">
-          Inicia sesión con tu cuenta de sistema
+    <div className="login-stage">
+      <section className="login-value-panel">
+        <div className="brand-mark brand-mark-large">BE</div>
+        <p className="app-kicker">Plataforma bibliotecaria</p>
+        <h2>Control moderno para circulación, catálogo y usuarios.</h2>
+        <p>
+          Administra préstamos, ejemplares y auditoría desde una interfaz rápida,
+          clara y preparada para operación diaria.
         </p>
+        <div className="login-metrics">
+          <div>
+            <strong>24/7</strong>
+            <span>Disponible en Vercel</span>
+          </div>
+          <div>
+            <strong>100%</strong>
+            <span>Cobertura validada</span>
+          </div>
+          <div>
+            <strong>k6</strong>
+            <span>Pruebas de carga</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="login-card bg-white p-8 rounded-lg shadow-md w-full border border-slate-200">
+        <div className="mb-6">
+          <p className="app-kicker text-center">Acceso seguro</p>
+          <h1 className="text-2xl font-bold text-center text-slate-900 mb-2">
+            Biblioteca ESPE
+          </h1>
+          <p className="text-slate-600 text-center text-sm">
+            Inicia sesión con tu cuenta de sistema
+          </p>
+        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-md text-sm mb-4 font-medium animate-shake">
@@ -76,30 +103,11 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 active:bg-blue-800 transition font-medium text-sm flex justify-center items-center h-10 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="primary-action w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 active:bg-blue-800 transition font-medium text-sm flex justify-center items-center h-10 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
-                {/* Spinner de carga SVG minimalista */}
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
+                <span className="login-spinner" />
                 <span>Validando credenciales...</span>
               </div>
             ) : (
@@ -107,6 +115,10 @@ export default function LoginPage() {
             )}
           </button>
         </form>
+
+        <p className="mt-5 text-center text-xs text-slate-500">
+          Operación protegida para personal autorizado.
+        </p>
       </div>
     </div>
   );
